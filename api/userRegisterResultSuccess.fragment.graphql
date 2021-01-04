@@ -1,0 +1,5 @@
+fragment userRegisterResultSuccess on UserRegisterResultSuccess {
+  user {
+    name
+  }
+}

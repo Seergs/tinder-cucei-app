@@ -1,0 +1,13 @@
+fragment errors on UserRegisterInvalidInputError {
+  message
+  name
+  fatherLastName
+  motherLastName
+  career
+  description
+  dateOfBirth
+  studentCode
+  studentNip
+  credentials
+  campus
+}
