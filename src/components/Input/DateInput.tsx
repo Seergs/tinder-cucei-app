@@ -1,37 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableHighlight,
   TextInput,
+  Platform,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { Controller, Control } from "react-hook-form";
 import theme from "../../styles/theme";
+import DatePicker from "../DatePicker";
 const { colors } = theme;
 
 interface DateInputProps {
   accessibilityLabel: string;
-  value: string;
-  onPress: () => void;
+  name: string;
+  control: Control;
 }
 
 export default function DateInput({
   accessibilityLabel,
-  value,
-  onPress,
+  control,
+  name,
 }: DateInputProps) {
-  const inputProps = {
-    accessibilityLabel,
-    value,
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  const handleDateChange = (
+    reactHookFormHandler: (...event: any[]) => void,
+    selectedDate?: Date
+  ) => {
+    const currentDate = selectedDate || new Date();
+    setIsDatePickerOpen(Platform.OS === "ios");
+    reactHookFormHandler(currentDate);
   };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{accessibilityLabel}</Text>
       <View style={styles.inputContainer}>
-        <TextInput {...inputProps} style={styles.input} />
+        <Controller
+          name={name}
+          control={control}
+          render={({ onChange, value }) => (
+            <>
+              <DatePicker
+                isOpen={isDatePickerOpen}
+                value={value}
+                onDateChange={(_, selectedDate) =>
+                  handleDateChange(onChange, selectedDate)
+                }
+              />
+              <TextInput
+                value={value}
+                accessibilityLabel={accessibilityLabel}
+                style={styles.input}
+              />
+            </>
+          )}
+        />
         <TouchableHighlight
-          onPress={onPress}
+          onPress={() => setIsDatePickerOpen(true)}
           accessibilityHint="Open date picker"
           activeOpacity={0.6}
           underlayColor={colors.textLightGray}
