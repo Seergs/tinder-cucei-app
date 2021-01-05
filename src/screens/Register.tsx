@@ -22,14 +22,16 @@ const { colors } = theme;
 
 export default function Register() {
   const { handleSubmit: onSubmit, control } = useForm();
-  const [birthday, setBirthday] = React.useState(new Date());
-  const [gender, setGender] = React.useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState(false);
 
-  const handleDateChange = (_: Event, selectedDate?: Date) => {
-    const currentDate = selectedDate || birthday;
+  const handleDateChange = (
+    _: Event,
+    reactHookFormHandler: (...event: any[]) => void,
+    selectedDate?: Date
+  ) => {
+    const currentDate = selectedDate || new Date();
     setIsDatePickerOpen(Platform.OS === "ios");
-    setBirthday(currentDate);
+    reactHookFormHandler(currentDate);
   };
 
   const handleSubmit = (data: any) => {
@@ -38,11 +40,6 @@ export default function Register() {
 
   return (
     <>
-      <DatePicker
-        isOpen={isDatePickerOpen}
-        value={birthday}
-        onChange={handleDateChange}
-      />
       <SafeAreaView style={styles.page}>
         <Text style={styles.title}>Crear {"\n"}Cuenta </Text>
         <Text style={styles.subtitle}>
@@ -59,17 +56,31 @@ export default function Register() {
             control={control}
             name="lastname"
           />
-          <DateInput
-            defaultValue={birthday.toDateString()}
-            accessibilityLabel="Fecha de nacimiento"
-            onPress={() => setIsDatePickerOpen(true)}
+          <Controller
+            name="birthday"
+            control={control}
+            defaultValue={new Date()}
+            render={({ onChange, value }) => (
+              <>
+                <DatePicker
+                  isOpen={isDatePickerOpen}
+                  value={value}
+                  onDateChange={(e, selectedDate) =>
+                    handleDateChange(e, onChange, selectedDate)
+                  }
+                />
+                <DateInput
+                  value={value.toDateString()}
+                  accessibilityLabel="Fecha de nacimiento"
+                  onPress={() => setIsDatePickerOpen(true)}
+                />
+              </>
+            )}
           />
           <PickerInput
             accessibilityLabel="Sexo"
-            value={gender}
-            onValueChange={(value: string | number, _: number) =>
-              setGender(value.toString())
-            }
+            control={control}
+            name="gender"
           >
             <Picker.Item label="Hombre" value="m" />
             <Picker.Item label="Mujer" value="f" />

@@ -12,18 +12,18 @@ const { colors } = theme;
 
 interface DateInputProps {
   accessibilityLabel: string;
-  defaultValue: string;
+  value: string;
   onPress: () => void;
 }
 
 export default function DateInput({
   accessibilityLabel,
-  defaultValue,
+  value,
   onPress,
 }: DateInputProps) {
   const inputProps = {
     accessibilityLabel,
-    defaultValue,
+    value,
   };
   return (
     <View style={styles.container}>
