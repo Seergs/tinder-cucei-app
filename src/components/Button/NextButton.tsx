@@ -7,7 +7,7 @@ const { colors } = theme;
 
 export default function NextButton() {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity style={styles.container}>
       <LinearGradient
         colors={[colors.primaryOrange, colors.primaryPink]}
         style={styles.button}
@@ -21,14 +21,20 @@ export default function NextButton() {
 }
 
 const styles = StyleSheet.create({
-  button: {
+  container: {
     marginTop: 20,
     marginBottom: 20,
     width: 80,
     height: 80,
-    borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
+  },
+  button: {
+    borderRadius: 50,
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -1,19 +1,38 @@
 import React from "react";
 import { View, StyleSheet, Text, TextInput as RNTextInput } from "react-native";
 import theme from "../../styles/theme";
+import { Controller, Control } from "react-hook-form";
 const { colors } = theme;
 
 interface TextInputProps {
   accessibilityLabel: string;
-  value: string;
-  onChangeText: (text: string) => void;
+  name: string;
+  defaultValue?: string;
+  control: Control;
 }
 
-export default function TextInput(props: TextInputProps) {
+export default function TextInput({
+  accessibilityLabel,
+  name,
+  defaultValue = "",
+  control,
+}: TextInputProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{props.accessibilityLabel}</Text>
-      <RNTextInput {...props} style={styles.input} />
+      <Text style={styles.label}>{accessibilityLabel}</Text>
+      <Controller
+        name={name}
+        control={control}
+        defaultValue={defaultValue}
+        render={({ onChange, value }) => (
+          <RNTextInput
+            style={styles.input}
+            value={value}
+            onChangeText={(text) => onChange(text)}
+            accessibilityLabel={accessibilityLabel}
+          />
+        )}
+      />
     </View>
   );
 }

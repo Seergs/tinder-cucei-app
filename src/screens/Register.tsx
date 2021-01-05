@@ -6,21 +6,22 @@ import {
   StyleSheet,
   Platform,
   StatusBar,
+  Button,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { Event } from "@react-native-community/datetimepicker";
 import theme from "../styles/theme";
 import TextInput from "../components/Input/TextInput";
 import DateInput from "../components/Input/DateInput";
 import DatePicker from "../components/DatePicker";
 import PickerInput from "../components/Input/PickerInput";
 import NextButton from "../components/Button/NextButton";
-import { Event } from "@react-native-community/datetimepicker";
+import { useForm, Controller } from "react-hook-form";
 
 const { colors } = theme;
 
 export default function Register() {
-  const [name, setName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
+  const { handleSubmit: onSubmit, control } = useForm();
   const [birthday, setBirthday] = React.useState(new Date());
   const [gender, setGender] = React.useState("");
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState(false);
@@ -29,6 +30,10 @@ export default function Register() {
     const currentDate = selectedDate || birthday;
     setIsDatePickerOpen(Platform.OS === "ios");
     setBirthday(currentDate);
+  };
+
+  const handleSubmit = (data: any) => {
+    console.log({ data });
   };
 
   return (
@@ -46,13 +51,13 @@ export default function Register() {
         <View style={styles.form}>
           <TextInput
             accessibilityLabel="Nombre"
-            onChangeText={(text) => setName(text)}
-            value={name}
+            control={control}
+            name="name"
           />
           <TextInput
             accessibilityLabel="Apellido"
-            value={lastName}
-            onChangeText={(text) => setLastName(text)}
+            control={control}
+            name="lastname"
           />
           <DateInput
             defaultValue={birthday.toDateString()}
@@ -71,6 +76,9 @@ export default function Register() {
           </PickerInput>
           <NextButton />
         </View>
+        <Button onPress={onSubmit(handleSubmit)} title="Submit">
+          Lets go
+        </Button>
       </SafeAreaView>
     </>
   );
