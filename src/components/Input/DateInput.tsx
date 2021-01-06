@@ -8,7 +8,6 @@ import {
   Platform,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { Controller, Control } from "react-hook-form";
 import theme from "../../styles/theme";
 import DatePicker from "../DatePicker";
 const { colors } = theme;
@@ -16,48 +15,37 @@ const { colors } = theme;
 interface DateInputProps {
   accessibilityLabel: string;
   name: string;
-  control: Control;
+  value: Date;
+  onChange: (key: string, newValue: any) => void;
 }
 
 export default function DateInput({
   accessibilityLabel,
-  control,
   name,
+  value,
+  onChange,
 }: DateInputProps) {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-  const handleDateChange = (
-    reactHookFormHandler: (...event: any[]) => void,
-    selectedDate?: Date
-  ) => {
+  const handleDateChange = (selectedDate?: Date) => {
     const currentDate = selectedDate || new Date();
     setIsDatePickerOpen(Platform.OS === "ios");
-    reactHookFormHandler(currentDate);
+    onChange(name, currentDate);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{accessibilityLabel}</Text>
       <View style={styles.inputContainer}>
-        <Controller
-          name={name}
-          control={control}
-          render={({ onChange, value }) => (
-            <>
-              <DatePicker
-                isOpen={isDatePickerOpen}
-                value={value}
-                onDateChange={(_, selectedDate) =>
-                  handleDateChange(onChange, selectedDate)
-                }
-              />
-              <TextInput
-                value={value}
-                accessibilityLabel={accessibilityLabel}
-                style={styles.input}
-              />
-            </>
-          )}
+        <DatePicker
+          isOpen={isDatePickerOpen}
+          value={value}
+          onDateChange={(_, selectedDate) => handleDateChange(selectedDate)}
+        />
+        <TextInput
+          value={value.toDateString()}
+          accessibilityLabel={accessibilityLabel}
+          style={styles.input}
         />
         <TouchableHighlight
           onPress={() => setIsDatePickerOpen(true)}

@@ -5,9 +5,13 @@ import { AntDesign } from "@expo/vector-icons";
 import theme from "../../styles/theme";
 const { colors } = theme;
 
-export default function NextButton() {
+interface NextButtonProps {
+  onPress: () => void;
+}
+
+export default function NextButton({ onPress }: NextButtonProps) {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <LinearGradient
         colors={[colors.primaryOrange, colors.primaryPink]}
         style={styles.button}

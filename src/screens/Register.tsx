@@ -5,19 +5,35 @@ import {
   StyleSheet,
   Platform,
   StatusBar,
+  TouchableHighlight,
 } from "react-native";
-import { useForm } from "react-hook-form";
-import PersonalRegisterForm from "../components/Register/Personal";
+import useForm from "../hooks/useForm";
+import StepOne from "../components/Register/StepOnePersonal";
 import NextButton from "../components/Button/NextButton";
 import theme from "../styles/theme";
 
 const { colors } = theme;
 
-export default function Register() {
-  const { handleSubmit: onSubmit, control } = useForm();
+const initialValues = {
+  firstName: "",
+  lastName: "",
+  birthday: new Date(),
+  gender: "m",
+};
 
-  const handleSubmit = (data: any) => {
-    console.log({ data });
+export default function Register() {
+  const [step, setStep] = React.useState(2);
+  const { values, onChange, onSubmit } = useForm({ initialValues });
+
+  const stepOneValues = {
+    firstName: values.firstName,
+    lastName: values.lastName,
+    birthday: values.birthday,
+    gender: values.gender,
+  };
+
+  const handleNextStep = () => {
+    setStep(step + 1);
   };
 
   return (
@@ -27,8 +43,15 @@ export default function Register() {
         <Text style={styles.subtitle}>
           Crea tu cuenta para empezar a conectar
         </Text>
-        <PersonalRegisterForm control={control} />
-        <NextButton />
+        <TouchableHighlight onPress={() => setStep(step - 1)}>
+          <Text>Back</Text>
+        </TouchableHighlight>
+        {step === 1 && <StepOne values={stepOneValues} onChange={onChange} />}
+
+        <NextButton onPress={handleNextStep} />
+        <TouchableHighlight onPress={onSubmit}>
+          <Text>Register</Text>
+        </TouchableHighlight>
       </SafeAreaView>
     </>
   );

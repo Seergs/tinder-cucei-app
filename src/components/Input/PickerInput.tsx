@@ -1,40 +1,34 @@
 import React from "react";
 import { Picker } from "@react-native-picker/picker";
 import { Text, View, StyleSheet } from "react-native";
-import { Controller, Control } from "react-hook-form";
 import theme from "../../styles/theme";
 const { colors } = theme;
 
 interface PickerInputProps {
   accessibilityLabel: string;
-  control: Control;
   name: string;
+  value: string;
   children: React.ReactNode;
+  onChange: (key: string, newValue: any) => void;
 }
 
 export default function PickerInput({
   accessibilityLabel,
   name,
-  control,
+  value,
   children,
+  onChange,
 }: PickerInputProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{accessibilityLabel}</Text>
-      <Controller
-        name={name}
-        control={control}
-        defaultValue="m"
-        render={({ onChange, value }) => (
-          <Picker
-            selectedValue={value}
-            onValueChange={(value) => onChange(value)}
-            itemStyle={styles.item}
-          >
-            {children}
-          </Picker>
-        )}
-      />
+      <Picker
+        selectedValue={value}
+        onValueChange={(value) => onChange(name, value.toString())}
+        itemStyle={styles.item}
+      >
+        {children}
+      </Picker>
     </View>
   );
 }
