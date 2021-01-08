@@ -11,7 +11,11 @@ interface NextButtonProps {
 
 export default function NextButton({ onPress }: NextButtonProps) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
       <LinearGradient
         colors={[colors.primaryOrange, colors.primaryPink]}
         style={styles.button}

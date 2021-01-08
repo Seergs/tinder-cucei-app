@@ -1,9 +1,0 @@
-#import "./userRegisterError.fragment.graphql"
-#import "./userRegisterResultSuccess.fragment.graphql"
-
-mutation userRegister($registerInputData: UserRegisterInput!) {
-  register(registerInputData: $registerInputData) {
-    ...userRegisterResultSuccess
-    ...errors
-  }
-}

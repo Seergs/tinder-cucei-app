@@ -4,6 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import TextInput from "../Input/TextInput";
 import DateInput from "../Input/DateInput";
 import PickerInput from "../Input/PickerInput";
+import Error from "./Error";
 
 interface PersonalProps {
   values: {
@@ -12,11 +13,18 @@ interface PersonalProps {
     birthday: Date;
     gender: string;
   };
+  errors: {
+    firstName: string | null | undefined;
+    lastName: string | null | undefined;
+    birthday: string | null | undefined;
+    gender: string | null | undefined;
+  };
   onChange: (key: string, value: string) => void;
 }
 
 export default function Personal({
   values: { firstName, lastName, birthday, gender },
+  errors,
   onChange,
 }: PersonalProps) {
   return (
@@ -27,18 +35,21 @@ export default function Personal({
         name="firstName"
         onChange={onChange}
       />
+      {errors.firstName && <Error message={errors.firstName} />}
       <TextInput
         accessibilityLabel="Apellido"
         name="lastName"
         value={lastName}
         onChange={onChange}
       />
+      {errors.lastName && <Error message={errors.lastName} />}
       <DateInput
         accessibilityLabel="Birthday"
         name="birthday"
         value={birthday}
         onChange={onChange}
       />
+      {errors.birthday && <Error message={errors.birthday} />}
       <PickerInput
         accessibilityLabel="Sexo"
         name="gender"
@@ -48,6 +59,7 @@ export default function Personal({
         <Picker.Item label="Hombre" value="m" />
         <Picker.Item label="Mujer" value="f" />
       </PickerInput>
+      {errors.gender && <Error message={errors.gender} />}
     </View>
   );
 }

@@ -1,0 +1,15 @@
+mutation ValidateStepOne($stepOneInputData: UserRegisterStepOneInput!) {
+  validateStepOne(stepOneInputData: $stepOneInputData) {
+    ... on UserRegisterStepOneSuccess {
+      __typename
+    }
+
+    ... on UserRegisterStepOneInputError {
+      __typename
+      firstName
+      lastName
+      gender
+      birthday
+    }
+  }
+}

@@ -23,13 +23,13 @@ export type Query = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  register: UserRegisterResult;
+  validateStepOne: UserRegisterStepOneResult;
   login: UserLoginResult;
 };
 
 
-export type MutationRegisterArgs = {
-  registerInputData: UserRegisterInput;
+export type MutationValidateStepOneArgs = {
+  stepOneInputData: UserRegisterStepOneInput;
 };
 
 
@@ -37,53 +37,26 @@ export type MutationLoginArgs = {
   loginInputData: UserLoginInput;
 };
 
-export type UserRegisterResult = UserRegisterResultSuccess | UserRegisterInvalidInputError;
+export type UserRegisterStepOneResult = UserRegisterStepOneSuccess | UserRegisterStepOneInputError;
 
-export type UserRegisterResultSuccess = {
-  __typename?: 'UserRegisterResultSuccess';
-  user: User;
+export type UserRegisterStepOneSuccess = {
+  __typename?: 'UserRegisterStepOneSuccess';
+  valid: Scalars['Boolean'];
 };
 
-export type User = {
-  __typename?: 'User';
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  name: Scalars['String'];
-  fatherLastName: Scalars['String'];
-  motherLastName: Scalars['String'];
-  career: Scalars['String'];
-  description: Scalars['String'];
-  birthday: Scalars['DateTime'];
-  primaryImageUrn: Scalars['String'];
-  secondaryImagesUrn: Array<Scalars['String']>;
+export type UserRegisterStepOneInputError = {
+  __typename?: 'UserRegisterStepOneInputError';
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  birthday?: Maybe<Scalars['String']>;
+  gender?: Maybe<Scalars['String']>;
 };
 
-
-export type UserRegisterInvalidInputError = {
-  __typename?: 'UserRegisterInvalidInputError';
-  message: Scalars['String'];
-  name?: Maybe<Scalars['String']>;
-  fatherLastName?: Maybe<Scalars['String']>;
-  motherLastName?: Maybe<Scalars['String']>;
-  career?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  dateOfBirth?: Maybe<Scalars['String']>;
-  studentCode?: Maybe<Scalars['String']>;
-  studentNip?: Maybe<Scalars['String']>;
-  credentials?: Maybe<Scalars['String']>;
-  campus?: Maybe<Scalars['String']>;
-};
-
-export type UserRegisterInput = {
-  name: Scalars['String'];
-  fatherLastName: Scalars['String'];
-  motherLastName: Scalars['String'];
-  career: Scalars['String'];
-  description: Scalars['String'];
+export type UserRegisterStepOneInput = {
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
   dateOfBirth: Scalars['String'];
-  studentCode: Scalars['String'];
-  studentNip: Scalars['String'];
+  gender: Scalars['String'];
 };
 
 export type UserLoginResult = UserLoginResultSuccess | UserLoginInvalidInputError;
@@ -92,6 +65,22 @@ export type UserLoginResultSuccess = {
   __typename?: 'UserLoginResultSuccess';
   user: User;
 };
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  career: Scalars['String'];
+  description: Scalars['String'];
+  birthday: Scalars['DateTime'];
+  gender: Scalars['String'];
+  primaryImageUrn: Scalars['String'];
+  secondaryImagesUrn: Array<Scalars['String']>;
+};
+
 
 export type UserLoginInvalidInputError = {
   __typename?: 'UserLoginInvalidInputError';
@@ -106,87 +95,58 @@ export type UserLoginInput = {
   studentNip: Scalars['String'];
 };
 
-export type UserRegisterMutationVariables = Exact<{
-  registerInputData: UserRegisterInput;
+export type ValidateStepOneMutationVariables = Exact<{
+  stepOneInputData: UserRegisterStepOneInput;
 }>;
 
 
-export type UserRegisterMutation = (
+export type ValidateStepOneMutation = (
   { __typename?: 'Mutation' }
-  & { register: (
-    { __typename?: 'UserRegisterResultSuccess' }
-    & UserRegisterResultSuccessFragment
-  ) | (
-    { __typename?: 'UserRegisterInvalidInputError' }
-    & ErrorsFragment
+  & { validateStepOne: { __typename: 'UserRegisterStepOneSuccess' } | (
+    { __typename: 'UserRegisterStepOneInputError' }
+    & Pick<UserRegisterStepOneInputError, 'firstName' | 'lastName' | 'gender' | 'birthday'>
   ) }
 );
 
-export type ErrorsFragment = (
-  { __typename?: 'UserRegisterInvalidInputError' }
-  & Pick<UserRegisterInvalidInputError, 'message' | 'name' | 'fatherLastName' | 'motherLastName' | 'career' | 'description' | 'dateOfBirth' | 'studentCode' | 'studentNip' | 'credentials'>
-);
 
-export type UserRegisterResultSuccessFragment = (
-  { __typename?: 'UserRegisterResultSuccess' }
-  & { user: (
-    { __typename?: 'User' }
-    & Pick<User, 'name'>
-  ) }
-);
-
-export const ErrorsFragmentDoc = gql`
-    fragment errors on UserRegisterInvalidInputError {
-  message
-  name
-  fatherLastName
-  motherLastName
-  career
-  description
-  dateOfBirth
-  studentCode
-  studentNip
-  credentials
-}
-    `;
-export const UserRegisterResultSuccessFragmentDoc = gql`
-    fragment userRegisterResultSuccess on UserRegisterResultSuccess {
-  user {
-    name
+export const ValidateStepOneDocument = gql`
+    mutation ValidateStepOne($stepOneInputData: UserRegisterStepOneInput!) {
+  validateStepOne(stepOneInputData: $stepOneInputData) {
+    ... on UserRegisterStepOneSuccess {
+      __typename
+    }
+    ... on UserRegisterStepOneInputError {
+      __typename
+      firstName
+      lastName
+      gender
+      birthday
+    }
   }
 }
     `;
-export const UserRegisterDocument = gql`
-    mutation userRegister($registerInputData: UserRegisterInput!) {
-  register(registerInputData: $registerInputData) {
-    ...userRegisterResultSuccess
-    ...errors
-  }
-}
-    ${UserRegisterResultSuccessFragmentDoc}
-${ErrorsFragmentDoc}`;
-export type UserRegisterMutationFn = Apollo.MutationFunction<UserRegisterMutation, UserRegisterMutationVariables>;
+export type ValidateStepOneMutationFn = Apollo.MutationFunction<ValidateStepOneMutation, ValidateStepOneMutationVariables>;
 
 /**
- * __useUserRegisterMutation__
+ * __useValidateStepOneMutation__
  *
- * To run a mutation, you first call `useUserRegisterMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUserRegisterMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useValidateStepOneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useValidateStepOneMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [userRegisterMutation, { data, loading, error }] = useUserRegisterMutation({
+ * const [validateStepOneMutation, { data, loading, error }] = useValidateStepOneMutation({
  *   variables: {
- *      registerInputData: // value for 'registerInputData'
+ *      stepOneInputData: // value for 'stepOneInputData'
  *   },
  * });
  */
-export function useUserRegisterMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UserRegisterMutation, UserRegisterMutationVariables>) {
-        return ApolloReactHooks.useMutation<UserRegisterMutation, UserRegisterMutationVariables>(UserRegisterDocument, baseOptions);
+export function useValidateStepOneMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ValidateStepOneMutation, ValidateStepOneMutationVariables>) {
+        return ApolloReactHooks.useMutation<ValidateStepOneMutation, ValidateStepOneMutationVariables>(ValidateStepOneDocument, baseOptions);
       }
-export type UserRegisterMutationHookResult = ReturnType<typeof useUserRegisterMutation>;
-export type UserRegisterMutationResult = Apollo.MutationResult<UserRegisterMutation>;
-export type UserRegisterMutationOptions = Apollo.BaseMutationOptions<UserRegisterMutation, UserRegisterMutationVariables>;
+export type ValidateStepOneMutationHookResult = ReturnType<typeof useValidateStepOneMutation>;
+export type ValidateStepOneMutationResult = Apollo.MutationResult<ValidateStepOneMutation>;
+export type ValidateStepOneMutationOptions = Apollo.BaseMutationOptions<ValidateStepOneMutation, ValidateStepOneMutationVariables>;

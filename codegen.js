@@ -1,7 +1,7 @@
 module.exports = {
   schema: "http://localhost:5000/graphql",
   overwrite: true,
-  documents: ["./api/*.graphql"],
+  documents: ["./api/**/*.graphql"],
   generates: {
     "./api/index.ts": {
       plugins: [

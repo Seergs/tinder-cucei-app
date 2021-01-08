@@ -1,59 +1,53 @@
 import React from "react";
 import {
-  SafeAreaView,
+  ScrollView,
   Text,
   StyleSheet,
   Platform,
   StatusBar,
+  View,
   TouchableHighlight,
 } from "react-native";
-import useForm from "../hooks/useForm";
+import useRegisterForm from "../hooks/useRegisterForm";
 import StepOne from "../components/Register/StepOnePersonal";
 import NextButton from "../components/Button/NextButton";
 import theme from "../styles/theme";
 
 const { colors } = theme;
 
-const initialValues = {
-  firstName: "",
-  lastName: "",
-  birthday: new Date(),
-  gender: "m",
-};
-
 export default function Register() {
-  const [step, setStep] = React.useState(2);
-  const { values, onChange, onSubmit } = useForm({ initialValues });
-
-  const stepOneValues = {
-    firstName: values.firstName,
-    lastName: values.lastName,
-    birthday: values.birthday,
-    gender: values.gender,
-  };
-
-  const handleNextStep = () => {
-    setStep(step + 1);
-  };
+  const {
+    stepOneValues,
+    step,
+    onChangeStepOne,
+    onNextStep,
+    onPreviousStep,
+    stepOneErrors,
+  } = useRegisterForm();
 
   return (
-    <>
-      <SafeAreaView style={styles.page}>
+    <View style={styles.page}>
+      <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>Crear {"\n"}Cuenta </Text>
         <Text style={styles.subtitle}>
           Crea tu cuenta para empezar a conectar
         </Text>
-        <TouchableHighlight onPress={() => setStep(step - 1)}>
-          <Text>Back</Text>
-        </TouchableHighlight>
-        {step === 1 && <StepOne values={stepOneValues} onChange={onChange} />}
+        {step > 0 && (
+          <TouchableHighlight onPress={onPreviousStep}>
+            <Text>Back</Text>
+          </TouchableHighlight>
+        )}
+        {step === 0 && (
+          <StepOne
+            values={stepOneValues}
+            errors={stepOneErrors}
+            onChange={onChangeStepOne}
+          />
+        )}
 
-        <NextButton onPress={handleNextStep} />
-        <TouchableHighlight onPress={onSubmit}>
-          <Text>Register</Text>
-        </TouchableHighlight>
-      </SafeAreaView>
-    </>
+        <NextButton onPress={onNextStep} />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -62,8 +56,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bg,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight! + 20 : 0,
-    paddingLeft: 30,
-    paddingRight: 30,
+  },
+  scrollView: {
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 36,
