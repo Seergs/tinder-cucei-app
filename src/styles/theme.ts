@@ -4,7 +4,7 @@ const theme = {
     textBlack: "#0F172A",
     textDarkGray: "#374151",
     textGray: "#64748B",
-    textLightGray: "#F3F4F6",
+    textLightGray: "#E5E5E5",
     primaryOrange: "#F07E7E",
     primaryPink: "#E24386",
     error: "#B91C1C",

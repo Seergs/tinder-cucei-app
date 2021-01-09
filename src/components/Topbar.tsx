@@ -1,31 +1,44 @@
 import React from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { View, StyleSheet, StatusBar } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import theme from "../styles/theme";
+const { colors } = theme;
 
 interface TopbarProps {
   children: React.ReactNode;
+  displayStyles: {
+    [key: string]: any;
+  };
 }
 
-export default function Topbar({ children }: TopbarProps) {
+export default function Topbar({ children, displayStyles }: TopbarProps) {
   return (
-    <SafeAreaView style={styles.topbar}>
-      <LinearGradient
-        colors={["#E24386", "#F07E7E"]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={styles.linearGradient}
-      >
-        {children}
-      </LinearGradient>
-    </SafeAreaView>
+    <>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
+      <View style={styles.topbar}>
+        <LinearGradient
+          colors={[colors.primaryOrange, colors.primaryPink]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={[styles.linearGradient, displayStyles]}
+        >
+          {children}
+        </LinearGradient>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   topbar: {
-    height: 100,
+    height: 90,
   },
   linearGradient: {
+    paddingTop: StatusBar.currentHeight,
     flex: 1,
   },
 });

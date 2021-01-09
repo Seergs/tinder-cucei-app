@@ -30,7 +30,7 @@ const stepOneInitialErrors: StepOneErrors = {
 };
 
 export default function useRegisterForm() {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
 
   const [stepOneValues, setStepOneValues] = useState(stepOneInitialValues);
   const [stepTwoValues, setStepTwoValues] = useState({});

@@ -44,7 +44,7 @@ export default function Personal({
       />
       {errors.lastName && <Error message={errors.lastName} />}
       <DateInput
-        accessibilityLabel="Birthday"
+        accessibilityLabel="Fecha de nacimiento"
         name="birthday"
         value={birthday}
         onChange={onChange}
