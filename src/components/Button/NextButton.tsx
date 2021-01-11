@@ -31,7 +31,7 @@ export default function NextButton({ onPress }: NextButtonProps) {
 const styles = StyleSheet.create({
   container: {
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 50,
     width: 80,
     height: 80,
     justifyContent: "center",
