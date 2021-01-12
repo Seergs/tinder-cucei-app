@@ -6,7 +6,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "generate": "graphql-codegen --config codegen.js"
+    "generate": "graphql-codegen --config codegen.js",
+    "dev": "react-devtools"
   },
   "dependencies": {
     "@apollo/client": "^3.3.6",
@@ -24,12 +25,12 @@
     "graphql": "^15.4.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-hook-form": "^6.14.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.0",
+    "react-native-snap-carousel": "^3.9.1",
     "react-native-tailwindcss": "^1.1.11",
     "react-native-web": "~0.13.12",
     "tailwind-rn": "^3.0.0"
@@ -44,6 +45,7 @@
     "@types/react": "~16.9.35",
     "@types/react-dom": "~16.9.8",
     "@types/react-native": "~0.63.2",
+    "@types/react-native-snap-carousel": "^3.8.2",
     "typescript": "~4.0.0"
   },
   "private": true

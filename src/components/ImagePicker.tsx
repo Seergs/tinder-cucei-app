@@ -84,11 +84,9 @@ export default function ImagePicker({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.textLightGray,
-    flex: 1,
     height: 100,
     width: 100,
     marginBottom: 20,
-    marginHorizontal: 10,
   },
   selectButton: {
     position: "absolute",

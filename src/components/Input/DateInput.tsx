@@ -16,6 +16,7 @@ interface DateInputProps {
   accessibilityLabel: string;
   name: string;
   value: Date;
+  hasError: boolean;
   onChange: (key: string, newValue: any) => void;
 }
 
@@ -23,6 +24,7 @@ export default function DateInput({
   accessibilityLabel,
   name,
   value,
+  hasError,
   onChange,
 }: DateInputProps) {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -36,7 +38,7 @@ export default function DateInput({
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{accessibilityLabel}</Text>
-      <View style={styles.inputContainer}>
+      <View style={{ ...styles.inputContainer, borderWidth: hasError ? 2 : 0 }}>
         <DatePicker
           isOpen={isDatePickerOpen}
           value={value}
@@ -79,6 +81,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderColor: colors.error,
   },
   input: {
     color: colors.textBlack,

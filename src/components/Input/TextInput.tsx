@@ -17,16 +17,19 @@ interface TextInputProps {
   type?: string | null;
   defaultValue?: string;
   placeholder?: string;
+  secureTextEntry?: boolean;
+  keyboardType?: any;
+  hasError: boolean;
   onChange: (key: string, newValue: any) => void;
 }
 
 export default function TextInput({
-  accessibilityLabel,
-  value,
+  hasError,
   name,
-  placeholder = "",
   type = null,
   onChange,
+  accessibilityLabel,
+  ...rest
 }: TextInputProps) {
   const inputStyles: StyleProp<TextStyle> =
     type === "textarea"
@@ -39,13 +42,19 @@ export default function TextInput({
     <View style={styles.container}>
       <Text style={styles.label}>{accessibilityLabel}</Text>
       <RNTextInput
-        style={[styles.input, inputStyles]}
-        value={value}
+        style={[
+          styles.input,
+          inputStyles,
+          {
+            borderColor: colors.error,
+            borderWidth: hasError ? 1 : 0,
+          },
+        ]}
         onChangeText={(text) => onChange(name, text)}
-        placeholder={placeholder}
         accessibilityLabel={accessibilityLabel}
         multiline={type === "textarea"}
         numberOfLines={type === "textarea" ? 10 : undefined}
+        {...rest}
       />
     </View>
   );

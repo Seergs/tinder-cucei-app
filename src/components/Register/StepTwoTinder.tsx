@@ -1,36 +1,32 @@
 import React from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import TextInput from "../Input/TextInput";
 import ImagePicker from "../ImagePicker";
+import NextButton from "../Button/NextButton";
 import theme from "../../styles/theme";
 import {
   StepTwo as Values,
   StepTwoErrors as Errors,
 } from "../../hooks/useRegisterForm";
 import Error from "./Error";
+import { WIDTH } from "../../constants";
 const { colors } = theme;
 
 interface StepTwoProps {
-  isVisible: boolean;
-  animation: Animated.AnimatedInterpolation;
   handler: {
     values: Values;
     errors: Errors;
     onChange: any;
     onChangeSecondaryImages: any;
+    onNextStep: () => void;
   };
 }
 
 export default function StepTwo({
-  isVisible,
-  animation,
-  handler: { values, errors, onChange, onChangeSecondaryImages },
+  handler: { values, errors, onChange, onChangeSecondaryImages, onNextStep },
 }: StepTwoProps) {
-  if (!isVisible) return null;
   return (
-    <Animated.View
-      style={[styles.form, { transform: [{ translateX: animation }] }]}
-    >
+    <View style={styles.form}>
       <Text style={styles.label}>Foto principal</Text>
       <ImagePicker
         position="flex-start"
@@ -70,9 +66,11 @@ export default function StepTwo({
         onChange={onChange}
         value={values.description}
         placeholder="Di algo sobre ti, esto lo verán los demás..."
+        hasError={Boolean(errors.description)}
       />
       {errors.description && <Error message={errors.description} />}
-    </Animated.View>
+      <NextButton onPress={onNextStep} />
+    </View>
   );
 }
 
@@ -80,6 +78,7 @@ const styles = StyleSheet.create({
   form: {
     marginTop: 20,
     paddingHorizontal: 20,
+    width: WIDTH,
   },
   container: {
     marginTop: 20,
@@ -92,6 +91,6 @@ const styles = StyleSheet.create({
   },
   secondaryImageContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
   },
 });

@@ -1,104 +1,84 @@
 import React from "react";
-import { ScrollView, Text, StyleSheet, View, Animated } from "react-native";
+import {
+  ScrollView,
+  Text,
+  StyleSheet,
+  View,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import Topbar from "../components/Topbar";
 import useRegisterForm from "../hooks/useRegisterForm";
 import StepOne from "../components/Register/StepOnePersonal";
 import StepTwo from "../components/Register/StepTwoTinder";
-import NextButton from "../components/Button/NextButton";
+import StepThree from "../components/Register/StepThreeCucei";
 import theme from "../styles/theme";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { WIDTH } from "../constants";
+import { FlatList } from "react-native-gesture-handler";
 
 const { colors } = theme;
 
+const steps = [0, 1, 2];
+
 export default function Register() {
-  const scrollViewRef = React.useRef<any>();
+  const ref = React.useRef<any>();
   const {
     step,
     stepOneHandler,
     stepTwoHandler,
-    onNextStep,
+    stepThreeHandler,
     onPreviousStep,
   } = useRegisterForm();
 
-  const animation = React.useRef(new Animated.Value(0)).current;
-
-  const slideInAnimation = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [500, 0],
-  });
-
-  const slideOutAnimation = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -500],
-  });
-
-  const fade = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
+  React.useEffect(() => {
+    ref.current.scrollToOffset({
+      offset: step * WIDTH,
+      animated: true,
+    });
+  }, [step]);
 
   return (
     <View style={styles.page}>
       <Topbar displayStyles={styles.topbar}>
         <Text style={styles.topbarText}>Registro</Text>
       </Topbar>
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.scrollView}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Text style={styles.title}>Crear {"\n"}Cuenta </Text>
-        <Text style={styles.subtitle}>
-          Crea tu cuenta para empezar a conectar
-        </Text>
-        {step > 0 && (
-          <Animated.View style={{ opacity: fade }}>
-            <TouchableOpacity
-              accessibilityHint="go to previous step"
-              onPress={() => {
-                onPreviousStep();
-                scrollViewRef.current.scrollTo({
-                  x: 0,
-                  y: 0,
-                  animated: true,
-                });
-                Animated.spring(animation, {
-                  toValue: 0,
-                  useNativeDriver: true,
-                  bounciness: 0,
-                }).start();
-              }}
-              style={styles.backButton}
-              activeOpacity={0.3}
-            >
-              <AntDesign name="arrowleft" size={20} />
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-        <StepOne
-          animation={slideOutAnimation}
-          handler={stepOneHandler}
-          isVisible={step === 0}
-        />
-        <StepTwo
-          animation={slideInAnimation}
-          handler={stepTwoHandler}
-          isVisible={step === 1}
-        />
+      <Text style={styles.title}>Crear {"\n"}Cuenta </Text>
+      <Text style={styles.subtitle}>
+        Crea tu cuenta para empezar a conectar
+      </Text>
+      {step > 0 && (
+        <Animated.View>
+          <TouchableOpacity
+            accessibilityHint="go to previous step"
+            onPress={() => {
+              onPreviousStep();
+            }}
+            style={styles.backButton}
+            activeOpacity={0.3}
+          >
+            <AntDesign name="arrowleft" size={20} />
+          </TouchableOpacity>
+        </Animated.View>
+      )}
 
-        <NextButton
-          onPress={() => {
-            onNextStep();
-            scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true });
-            Animated.spring(animation, {
-              toValue: 1,
-              useNativeDriver: true,
-              bounciness: 0,
-            }).start();
-          }}
-        />
-      </ScrollView>
+      <FlatList
+        ref={ref}
+        data={steps}
+        keyExtractor={(item) => item.toString()}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        scrollEnabled={false}
+        renderItem={({ index }) => (
+          <ScrollView keyboardShouldPersistTaps="handled">
+            {index === 0 && <StepOne handler={stepOneHandler} />}
+            {index === 1 && <StepTwo handler={stepTwoHandler} />}
+            {index === 2 && <StepThree handler={stepThreeHandler} />}
+          </ScrollView>
+        )}
+      />
     </View>
   );
 }
@@ -116,10 +96,11 @@ const styles = StyleSheet.create({
     color: colors.textBlack,
     fontWeight: "700",
     paddingHorizontal: 20,
+    marginTop: 20,
   },
   subtitle: {
     color: colors.textGray,
-    marginTop: 15,
+    marginVertical: 15,
     fontSize: 16,
     paddingHorizontal: 20,
   },
@@ -135,7 +116,7 @@ const styles = StyleSheet.create({
   backButton: {
     width: 30,
     height: 30,
-    marginTop: 10,
+    marginBottom: 10,
     justifyContent: "center",
     marginLeft: 20,
   },

@@ -9,7 +9,7 @@ interface ErrorProps {
 }
 
 export default function Error({ message }: ErrorProps) {
-  return <Text style={styles.text}>* {message}</Text>;
+  return <Text style={styles.text}>{message}</Text>;
 }
 
 const styles = StyleSheet.create({
