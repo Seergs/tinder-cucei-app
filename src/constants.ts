@@ -4,4 +4,4 @@ const { width } = Dimensions.get("screen");
 
 export const WIDTH = width;
 
-export const BASE_URL = "https://44d90cace771.ngrok.io";
+export const BASE_URL = "http://192.168.0.8:5000";

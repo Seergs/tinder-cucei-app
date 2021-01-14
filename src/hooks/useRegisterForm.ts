@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { isEmpty, formatDate, getAgeFromDateOfBirth } from "../utils/utils";
 import { careers } from "../utils/careers";
+import { useRegisterMutation } from "../../api";
+import Toast from "react-native-toast-message";
 
 export interface StepOne {
   firstName: string;
@@ -18,13 +20,13 @@ export interface StepOneErrors {
 
 export interface StepTwo {
   primaryImageUrl: string;
-  secondaryImageUrls: string[];
+  secondaryImagesUrl: string[];
   description: string;
 }
 
 export interface StepTwoErrors {
-  primaryImageUrl: string | null;
-  description: string | null;
+  primaryImageUrl: string | null | undefined;
+  description: string | null | undefined;
 }
 
 export interface StepThree {
@@ -34,9 +36,9 @@ export interface StepThree {
 }
 
 export interface StepThreeErrors {
-  career: string | null;
-  studentCode: string | null;
-  studentNip: string | null;
+  career: string | null | undefined;
+  studentCode: string | null | undefined;
+  studentNip: string | null | undefined;
 }
 
 const stepOneInitialValues: StepOne = {
@@ -48,7 +50,7 @@ const stepOneInitialValues: StepOne = {
 
 const stepTwoInitialValues: StepTwo = {
   primaryImageUrl: "",
-  secondaryImageUrls: ["", "", ""],
+  secondaryImagesUrl: ["", "", ""],
   description: "",
 };
 
@@ -90,6 +92,8 @@ export default function useRegisterForm() {
     stepThreeInitialErrors
   );
 
+  const [register] = useRegisterMutation();
+
   function onChangeStepOne(key: keyof StepOne, newValue: any) {
     setStepOneValues({ ...stepOneValues, [key]: newValue });
   }
@@ -103,16 +107,16 @@ export default function useRegisterForm() {
   }
 
   function onChangeSecondaryImages(index: number, newValue: string) {
-    let secondaryImageUrls = stepTwoValues.secondaryImageUrls;
-    secondaryImageUrls[index] = newValue;
+    let secondaryImageUrl = stepTwoValues.secondaryImagesUrl;
+    secondaryImageUrl[index] = newValue;
 
     setStepTwoValues({
       ...stepTwoValues,
-      secondaryImageUrls: secondaryImageUrls,
+      secondaryImagesUrl: secondaryImageUrl,
     });
   }
 
-  const onNextStep = () => {
+  const onNextStep = async () => {
     switch (step) {
       case 0: {
         const errors = validateStepOne(stepOneValues);
@@ -140,7 +144,7 @@ export default function useRegisterForm() {
           setStepThreeErrors(errors);
         } else {
           setStepThreeErrors(stepThreeInitialErrors);
-          console.log("Finsihed");
+          await onSubmit();
         }
       }
     }
@@ -148,6 +152,56 @@ export default function useRegisterForm() {
 
   const onPreviousStep = () => {
     setStep(step - 1);
+  };
+
+  const onSubmit = async (): Promise<boolean> => {
+    const registerInputData = {
+      ...stepOneValues,
+      ...stepTwoValues,
+      ...stepThreeValues,
+      birthday: formatDate(stepOneValues.birthday),
+    };
+
+    const { data } = await register({
+      variables: {
+        registerInputData,
+      },
+    });
+
+    if (data?.register.__typename === "UserRegisterResultSuccess") return true;
+
+    setStepOneErrors({
+      birthday: data?.register.birthday,
+      firstName: data?.register.firstName,
+      gender: data?.register.gender,
+      lastName: data?.register.lastName,
+    });
+
+    setStepTwoErrors({
+      description: data?.register.description,
+      primaryImageUrl: data?.register.primaryImageUrl,
+    });
+
+    setStepThreeErrors({
+      career: data?.register.career,
+      studentCode: data?.register.studentCode,
+      studentNip: data?.register.studentNip,
+    });
+
+    if (data?.register.campus) {
+      Toast.show({
+        type: "error",
+        text1: "Lo sentimos 😔",
+        text2: data.register.campus,
+      });
+    } else if (data?.register.credentials) {
+      Toast.show({
+        type: "error",
+        text1: "Lo sentimos 😔",
+        text2: data.register.credentials,
+      });
+    }
+    return false;
   };
 
   const stepOneHandler = {
@@ -179,6 +233,7 @@ export default function useRegisterForm() {
     stepThreeHandler,
     onNextStep,
     onPreviousStep,
+    onSubmit,
   };
 }
 

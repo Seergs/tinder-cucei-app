@@ -41,21 +41,21 @@ export default function StepTwo({
           position="flex-start"
           index={0}
           name="secondaryImageUrls"
-          value={values.secondaryImageUrls[0]!}
+          value={values.secondaryImagesUrl[0]!}
           onChange={onChangeSecondaryImages}
         />
         <ImagePicker
           position="flex-start"
           index={1}
           name="secondaryImageUrls"
-          value={values.secondaryImageUrls[1]!}
+          value={values.secondaryImagesUrl[1]!}
           onChange={onChangeSecondaryImages}
         />
         <ImagePicker
           position="flex-start"
           index={2}
           name="secondaryImageUrls"
-          value={values.secondaryImageUrls[2]!}
+          value={values.secondaryImagesUrl[2]!}
           onChange={onChangeSecondaryImages}
         />
       </View>

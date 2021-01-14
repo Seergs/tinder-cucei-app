@@ -1,0 +1,23 @@
+mutation Register($registerInputData: UserRegisterInput!) {
+  register(registerInputData: $registerInputData) {
+    __typename
+    ... on UserRegisterResultSuccess {
+      user {
+        id
+      }
+    }
+    ... on UserRegisterInvalidInputError {
+      studentCode
+      studentNip
+      firstName
+      lastName
+      birthday
+      career
+      description
+      gender
+      primaryImageUrl
+      campus
+      credentials
+    }
+  }
+}
