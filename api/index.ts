@@ -14,6 +14,8 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Query = {
@@ -25,6 +27,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   validateStepOne: UserRegisterStepOneResult;
   login: UserLoginResult;
+  uploadImage: Scalars['Boolean'];
 };
 
 
@@ -35,6 +38,11 @@ export type MutationValidateStepOneArgs = {
 
 export type MutationLoginArgs = {
   loginInputData: UserLoginInput;
+};
+
+
+export type MutationUploadImageArgs = {
+  image: Scalars['Upload'];
 };
 
 export type UserRegisterStepOneResult = UserRegisterStepOneSuccess | UserRegisterStepOneInputError;
@@ -95,6 +103,7 @@ export type UserLoginInput = {
   studentNip: Scalars['String'];
 };
 
+
 export type ValidateStepOneMutationVariables = Exact<{
   stepOneInputData: UserRegisterStepOneInput;
 }>;
@@ -106,6 +115,24 @@ export type ValidateStepOneMutation = (
     { __typename: 'UserRegisterStepOneInputError' }
     & Pick<UserRegisterStepOneInputError, 'firstName' | 'lastName' | 'gender' | 'birthday'>
   ) }
+);
+
+export type UploadImageMutationVariables = Exact<{
+  image: Scalars['Upload'];
+}>;
+
+
+export type UploadImageMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'uploadImage'>
+);
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'me'>
 );
 
 
@@ -150,3 +177,63 @@ export function useValidateStepOneMutation(baseOptions?: ApolloReactHooks.Mutati
 export type ValidateStepOneMutationHookResult = ReturnType<typeof useValidateStepOneMutation>;
 export type ValidateStepOneMutationResult = Apollo.MutationResult<ValidateStepOneMutation>;
 export type ValidateStepOneMutationOptions = Apollo.BaseMutationOptions<ValidateStepOneMutation, ValidateStepOneMutationVariables>;
+export const UploadImageDocument = gql`
+    mutation UploadImage($image: Upload!) {
+  uploadImage(image: $image)
+}
+    `;
+export type UploadImageMutationFn = Apollo.MutationFunction<UploadImageMutation, UploadImageMutationVariables>;
+
+/**
+ * __useUploadImageMutation__
+ *
+ * To run a mutation, you first call `useUploadImageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadImageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadImageMutation, { data, loading, error }] = useUploadImageMutation({
+ *   variables: {
+ *      image: // value for 'image'
+ *   },
+ * });
+ */
+export function useUploadImageMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UploadImageMutation, UploadImageMutationVariables>) {
+        return ApolloReactHooks.useMutation<UploadImageMutation, UploadImageMutationVariables>(UploadImageDocument, baseOptions);
+      }
+export type UploadImageMutationHookResult = ReturnType<typeof useUploadImageMutation>;
+export type UploadImageMutationResult = Apollo.MutationResult<UploadImageMutation>;
+export type UploadImageMutationOptions = Apollo.BaseMutationOptions<UploadImageMutation, UploadImageMutationVariables>;
+export const MeDocument = gql`
+    query Me {
+  me
+}
+    `;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        return ApolloReactHooks.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+      }
+export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;

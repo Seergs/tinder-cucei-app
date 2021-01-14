@@ -8,6 +8,9 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import * as NativeImagePicker from "expo-image-picker";
+import * as mime from "react-native-mime-types";
+import Toast from "react-native-toast-message";
+import { uploadImageToCloudinary } from "../../api/Upload/uploadImage";
 import theme from "../styles/theme";
 const { colors } = theme;
 
@@ -42,15 +45,29 @@ export default function ImagePicker({
     const result = await NativeImagePicker.launchImageLibraryAsync({
       mediaTypes: NativeImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
+      allowsMultipleSelection: false,
       aspect: [1, 1],
       quality: 1,
     });
 
     if (!result.cancelled) {
-      if (name === "secondaryImageUrls") {
-        onChange(index, result.uri);
-      }
-      onChange(name, result.uri);
+      const image = {
+        name: `picture-${Date.now()}`,
+        type: mime.lookup(result.uri) || result.type,
+        uri: result.uri,
+      };
+      const imageUrl = await uploadImageToCloudinary(image);
+
+      if (imageUrl) {
+        if (name === "secondaryImageUrls") {
+          onChange(index, imageUrl);
+        }
+        onChange(name, imageUrl);
+      } else
+        Toast.show({
+          type: "error",
+          text1: "Algo salió mal, intenta de nuevo más tarde",
+        });
     }
   };
 

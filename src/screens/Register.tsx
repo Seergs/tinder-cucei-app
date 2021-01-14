@@ -6,6 +6,7 @@ import {
   View,
   Animated,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import Topbar from "../components/Topbar";
@@ -15,7 +16,6 @@ import StepTwo from "../components/Register/StepTwoTinder";
 import StepThree from "../components/Register/StepThreeCucei";
 import theme from "../styles/theme";
 import { WIDTH } from "../constants";
-import { FlatList } from "react-native-gesture-handler";
 
 const { colors } = theme;
 

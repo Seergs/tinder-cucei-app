@@ -1,8 +1,26 @@
 import React from "react";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloProvider,
+  ApolloLink,
+  InMemoryCache,
+} from "@apollo/client";
+import { onError } from "apollo-link-error";
+import { BASE_URL } from "../constants";
+
+const uri = `${BASE_URL}/graphql`;
+
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    console.log("graphqlerror", graphQLErrors);
+  }
+  if (networkError) {
+    console.log("network errors", networkError);
+  }
+});
 
 const client = new ApolloClient({
-  uri: "http://192.168.0.8:5000/graphql",
+  uri,
   cache: new InMemoryCache(),
 });
 

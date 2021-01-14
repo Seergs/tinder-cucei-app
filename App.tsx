@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Register from "./src/screens/Register";
 import AppProviders from "./src/components/Providers";
 import { AppRegistry } from "react-native";
+import Toast from "react-native-toast-message";
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ export default function App() {
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
+        <Toast ref={(ref) => Toast.setRef(ref)} />
       </NavigationContainer>
     </AppProviders>
   );
