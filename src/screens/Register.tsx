@@ -9,6 +9,7 @@ import {
   FlatList,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import Topbar from "../components/Topbar";
 import useRegisterForm from "../hooks/useRegisterForm";
 import StepOne from "../components/Register/StepOnePersonal";
@@ -16,12 +17,15 @@ import StepTwo from "../components/Register/StepTwoTinder";
 import StepThree from "../components/Register/StepThreeCucei";
 import theme from "../styles/theme";
 import { WIDTH } from "../constants";
+import NextButton from "../components/Button/NextButton";
+import Toast from "react-native-toast-message";
 
 const { colors } = theme;
 
 const steps = [0, 1, 2];
 
 export default function Register() {
+  const navigation = useNavigation();
   const ref = React.useRef<any>();
   const {
     step,
@@ -29,6 +33,8 @@ export default function Register() {
     stepTwoHandler,
     stepThreeHandler,
     onPreviousStep,
+    onNextStep,
+    status,
   } = useRegisterForm();
 
   React.useEffect(() => {
@@ -38,6 +44,13 @@ export default function Register() {
     });
   }, [step]);
 
+  React.useEffect(() => {
+    if (status === "finished") {
+      Toast.show({ type: "success", text1: "✔ Cuenta creada, inicia sesión" });
+      navigation.navigate("Login");
+    }
+  }, [status]);
+
   return (
     <View style={styles.page}>
       <Topbar displayStyles={styles.topbar}>
@@ -46,6 +59,12 @@ export default function Register() {
       <Text style={styles.title}>Crear {"\n"}Cuenta </Text>
       <Text style={styles.subtitle}>
         Crea tu cuenta para empezar a conectar
+      </Text>
+      <Text style={styles.linkText}>
+        Ya tienes una cuenta?{" "}
+        <Text style={styles.link} onPress={() => navigation.navigate("Login")}>
+          Inicia sesión
+        </Text>
       </Text>
       {step > 0 && (
         <Animated.View>
@@ -76,6 +95,7 @@ export default function Register() {
             {index === 0 && <StepOne handler={stepOneHandler} />}
             {index === 1 && <StepTwo handler={stepTwoHandler} />}
             {index === 2 && <StepThree handler={stepThreeHandler} />}
+            <NextButton onPress={onNextStep} isLoading={status === "loading"} />
           </ScrollView>
         )}
       />
@@ -119,5 +139,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     justifyContent: "center",
     marginLeft: 20,
+  },
+  linkText: {
+    color: colors.textGray,
+    fontSize: 16,
+    marginHorizontal: 20,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  link: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: colors.primaryOrange,
+    alignItems: "center",
   },
 });

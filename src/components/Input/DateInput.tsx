@@ -38,7 +38,7 @@ export default function DateInput({
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{accessibilityLabel}</Text>
-      <View style={{ ...styles.inputContainer, borderWidth: hasError ? 2 : 0 }}>
+      <View style={{ ...styles.inputContainer, borderWidth: hasError ? 1 : 0 }}>
         <DatePicker
           isOpen={isDatePickerOpen}
           value={value}

@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { WIDTH } from "../../constants";
 import PickerInput from "../Input/PickerInput";
-import NextButton from "../Button/NextButton";
 import Error from "./Error";
 import {
   StepThree as Values,
@@ -16,11 +15,10 @@ interface CuceiProps {
     values: Values;
     errors: Errors;
     onChange: any;
-    onNextStep: () => void;
   };
 }
 export default function StepThree({
-  handler: { values, errors, onChange, onNextStep },
+  handler: { values, errors, onChange },
 }: CuceiProps) {
   return (
     <View style={styles.form}>
@@ -54,7 +52,6 @@ export default function StepThree({
         secureTextEntry
       />
       {errors.studentNip && <Error message={errors.studentNip} />}
-      <NextButton onPress={onNextStep} />
     </View>
   );
 }

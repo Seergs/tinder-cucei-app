@@ -78,8 +78,11 @@ const stepThreeInitialErrors: StepThreeErrors = {
   studentNip: null,
 };
 
+type Status = "idle" | "loading" | "error" | "finished";
+
 export default function useRegisterForm() {
   const [step, setStep] = useState(0);
+  const [status, setStatus] = useState<Status>("idle");
   const [stepOneValues, setStepOneValues] = useState(stepOneInitialValues);
   const [stepTwoValues, setStepTwoValues] = useState(stepTwoInitialValues);
   const [stepThreeValues, setStepThreeValues] = useState(
@@ -144,7 +147,9 @@ export default function useRegisterForm() {
           setStepThreeErrors(errors);
         } else {
           setStepThreeErrors(stepThreeInitialErrors);
-          await onSubmit();
+          if (await onSubmit()) {
+            setStatus("finished");
+          }
         }
       }
     }
@@ -155,6 +160,7 @@ export default function useRegisterForm() {
   };
 
   const onSubmit = async (): Promise<boolean> => {
+    setStatus("loading");
     const registerInputData = {
       ...stepOneValues,
       ...stepTwoValues,
@@ -162,45 +168,57 @@ export default function useRegisterForm() {
       birthday: formatDate(stepOneValues.birthday),
     };
 
-    const { data } = await register({
-      variables: {
-        registerInputData,
-      },
-    });
-
-    if (data?.register.__typename === "UserRegisterResultSuccess") return true;
-
-    setStepOneErrors({
-      birthday: data?.register.birthday,
-      firstName: data?.register.firstName,
-      gender: data?.register.gender,
-      lastName: data?.register.lastName,
-    });
-
-    setStepTwoErrors({
-      description: data?.register.description,
-      primaryImageUrl: data?.register.primaryImageUrl,
-    });
-
-    setStepThreeErrors({
-      career: data?.register.career,
-      studentCode: data?.register.studentCode,
-      studentNip: data?.register.studentNip,
-    });
-
-    if (data?.register.campus) {
-      Toast.show({
-        type: "error",
-        text1: "Lo sentimos 😔",
-        text2: data.register.campus,
+    try {
+      const { data } = await register({
+        variables: {
+          registerInputData,
+        },
       });
-    } else if (data?.register.credentials) {
+
+      if (data?.register.__typename === "UserRegisterResultSuccess") {
+        setStatus("finished");
+        return true;
+      }
+
+      setStepOneErrors({
+        birthday: data?.register.birthday,
+        firstName: data?.register.firstName,
+        gender: data?.register.gender,
+        lastName: data?.register.lastName,
+      });
+
+      setStepTwoErrors({
+        description: data?.register.description,
+        primaryImageUrl: data?.register.primaryImageUrl,
+      });
+
+      setStepThreeErrors({
+        career: data?.register.career,
+        studentCode: data?.register.studentCode,
+        studentNip: data?.register.studentNip,
+      });
+
+      if (data?.register.campus) {
+        Toast.show({
+          type: "error",
+          text1: "Lo sentimos 😔",
+          text2: data.register.campus,
+        });
+      } else if (data?.register.credentials) {
+        Toast.show({
+          type: "error",
+          text1: "Lo sentimos 😔",
+          text2: data.register.credentials,
+        });
+      }
+    } catch (e) {
       Toast.show({
         type: "error",
-        text1: "Lo sentimos 😔",
-        text2: data.register.credentials,
+        text1: "Ups",
+        text2: "Algo salió mal, intenta de nuevo más tarde",
       });
     }
+    setStatus("error");
     return false;
   };
 
@@ -208,7 +226,6 @@ export default function useRegisterForm() {
     values: stepOneValues,
     errors: stepOneErrors,
     onChange: onChangeStepOne,
-    onNextStep,
   };
 
   const stepTwoHandler = {
@@ -216,18 +233,17 @@ export default function useRegisterForm() {
     errors: stepTwoErrors,
     onChange: onChangeStepTwo,
     onChangeSecondaryImages,
-    onNextStep,
   };
 
   const stepThreeHandler = {
     values: stepThreeValues,
     errors: stepThreeErrors,
     onChange: onChangeStepThree,
-    onNextStep,
   };
 
   return {
     step,
+    status,
     stepOneHandler,
     stepTwoHandler,
     stepThreeHandler,

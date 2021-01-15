@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import TextInput from "../Input/TextInput";
 import ImagePicker from "../ImagePicker";
-import NextButton from "../Button/NextButton";
 import theme from "../../styles/theme";
 import {
   StepTwo as Values,
@@ -18,12 +17,11 @@ interface StepTwoProps {
     errors: Errors;
     onChange: any;
     onChangeSecondaryImages: any;
-    onNextStep: () => void;
   };
 }
 
 export default function StepTwo({
-  handler: { values, errors, onChange, onChangeSecondaryImages, onNextStep },
+  handler: { values, errors, onChange, onChangeSecondaryImages },
 }: StepTwoProps) {
   return (
     <View style={styles.form}>
@@ -69,7 +67,6 @@ export default function StepTwo({
         hasError={Boolean(errors.description)}
       />
       {errors.description && <Error message={errors.description} />}
-      <NextButton onPress={onNextStep} />
     </View>
   );
 }

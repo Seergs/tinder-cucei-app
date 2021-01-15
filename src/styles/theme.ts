@@ -8,6 +8,7 @@ const theme = {
     primaryOrange: "#F07E7E",
     primaryPink: "#E24386",
     error: "#B91C1C",
+    link: "#1D4ED8",
   },
 };
 export default theme;

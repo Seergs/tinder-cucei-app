@@ -4,7 +4,6 @@ import { Picker } from "@react-native-picker/picker";
 import TextInput from "../Input/TextInput";
 import DateInput from "../Input/DateInput";
 import PickerInput from "../Input/PickerInput";
-import NextButton from "../Button/NextButton";
 import Error from "./Error";
 import {
   StepOne as Values,
@@ -17,12 +16,11 @@ interface PersonalProps {
     values: Values;
     errors: Errors;
     onChange: any;
-    onNextStep: () => void;
   };
 }
 
 export default function StepOne({
-  handler: { values, errors, onChange, onNextStep },
+  handler: { values, errors, onChange },
 }: PersonalProps) {
   return (
     <View style={styles.form}>
@@ -62,7 +60,6 @@ export default function StepOne({
         <Picker.Item label="Mujer" value="f" />
       </PickerInput>
       {errors.gender && <Error message={errors.gender} />}
-      <NextButton onPress={onNextStep} />
     </View>
   );
 }
