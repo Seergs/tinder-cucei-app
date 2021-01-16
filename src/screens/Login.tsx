@@ -1,20 +1,23 @@
-import React, { useState } from "react";
-import { Text, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Topbar from "../components/Topbar";
-import theme from "../styles/theme";
-import TextInput from "../components/Input/TextInput";
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
+
+import { useLoginMutation } from "../../api";
 import NextButton from "../components/Button/NextButton";
 import Error from "../components/Error";
+import TextInput from "../components/Input/TextInput";
+import Topbar from "../components/Topbar";
 import useAsyncStorage from "../hooks/useAsyncStorage";
-import { useLoginMutation } from "../../api";
-import Toast from "react-native-toast-message";
+import theme from "../styles/theme";
 
 const { colors } = theme;
 
-export default function Register() {
+export default function Login() {
   const navigation = useNavigation();
+
   const { setValue: setJwt } = useAsyncStorage("jwt", null);
+
   const [studentCode, setStudentCode] = useState<{
     value: string;
     error: string | null | undefined;

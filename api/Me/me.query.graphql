@@ -1,0 +1,12 @@
+query Me {
+  me {
+    __typename
+    ... on MeResultSuccess {
+      id
+      studentCode
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}

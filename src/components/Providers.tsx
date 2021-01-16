@@ -2,15 +2,37 @@ import React from "react";
 import {
   ApolloClient,
   ApolloProvider,
-  ApolloLink,
   InMemoryCache,
+  createHttpLink,
 } from "@apollo/client";
-import { onError } from "apollo-link-error";
+import { setContext } from "@apollo/client/link/context";
+import { AuthProvider } from "../context/AuthContext";
 import { BASE_URL } from "../constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const uri = `${BASE_URL}/graphql`;
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+const httpLink = createHttpLink({
+  uri,
+});
+
+const authLink = setContext(async (_, { headers }) => {
+  const token = await AsyncStorage.getItem("jwt");
+
+  let bearerToken: any;
+  if (token) {
+    bearerToken = `Bearer ${JSON.parse(token)}`;
+  }
+
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? bearerToken : null,
+    },
+  };
+});
+
+/*const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     console.log("graphqlerror", graphQLErrors);
   }
@@ -18,9 +40,10 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     console.log("network errors", networkError);
   }
 });
+*/
 
 const client = new ApolloClient({
-  uri,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
@@ -29,5 +52,9 @@ interface AppProvidersProps {
 }
 
 export default function AppProviders({ children }: AppProvidersProps) {
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+  return (
+    <ApolloProvider client={client}>
+      <AuthProvider>{children}</AuthProvider>
+    </ApolloProvider>
+  );
 }

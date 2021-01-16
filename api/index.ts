@@ -18,7 +18,21 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  me: Scalars['String'];
+  me: MeResult;
+};
+
+export type MeResult = MeResultSuccess | MeResultError;
+
+export type MeResultSuccess = {
+  __typename?: 'MeResultSuccess';
+  id: Scalars['String'];
+  studentCode: Scalars['String'];
+  firstName: Scalars['String'];
+};
+
+export type MeResultError = {
+  __typename?: 'MeResultError';
+  message: Scalars['String'];
 };
 
 export type Mutation = {
@@ -124,6 +138,20 @@ export type LoginMutation = (
   ) }
 );
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename: 'MeResultSuccess' }
+    & Pick<MeResultSuccess, 'id' | 'studentCode'>
+  ) | (
+    { __typename: 'MeResultError' }
+    & Pick<MeResultError, 'message'>
+  ) }
+);
+
 export type RegisterMutationVariables = Exact<{
   registerInputData: UserRegisterInput;
 }>;
@@ -184,6 +212,45 @@ export function useLoginMutation(baseOptions?: ApolloReactHooks.MutationHookOpti
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const MeDocument = gql`
+    query Me {
+  me {
+    __typename
+    ... on MeResultSuccess {
+      id
+      studentCode
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}
+    `;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        return ApolloReactHooks.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+      }
+export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($registerInputData: UserRegisterInput!) {
   register(registerInputData: $registerInputData) {
