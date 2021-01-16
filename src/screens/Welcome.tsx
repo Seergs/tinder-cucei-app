@@ -27,12 +27,14 @@ export default function Welcome() {
       <Text style={styles.subtitle}>Regristrarse no toma más de 2 minutos</Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
+          activeOpacity={0.8}
           style={[styles.button, styles.registerButton]}
           onPress={() => navigation.navigate("Register")}
         >
           <Text style={styles.buttonText}>Registro</Text>
         </TouchableOpacity>
         <TouchableOpacity
+          activeOpacity={0.8}
           style={styles.button}
           onPress={() => navigation.navigate("Login")}
         >
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   registerButton: {
-    backgroundColor: colors.textBlack,
+    backgroundColor: "black",
   },
   buttonText: {
     color: "white",

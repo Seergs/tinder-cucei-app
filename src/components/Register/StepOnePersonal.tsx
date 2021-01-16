@@ -4,7 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import TextInput from "../Input/TextInput";
 import DateInput from "../Input/DateInput";
 import PickerInput from "../Input/PickerInput";
-import Error from "./Error";
+import Error from "../Error";
 import {
   StepOne as Values,
   StepOneErrors as Errors,

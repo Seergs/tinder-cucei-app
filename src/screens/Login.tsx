@@ -4,19 +4,48 @@ import { useNavigation } from "@react-navigation/native";
 import Topbar from "../components/Topbar";
 import theme from "../styles/theme";
 import TextInput from "../components/Input/TextInput";
+import NextButton from "../components/Button/NextButton";
+import Error from "../components/Error";
+import useAsyncStorage from "../hooks/useAsyncStorage";
+import { useLoginMutation } from "../../api";
+import Toast from "react-native-toast-message";
 
 const { colors } = theme;
 
 export default function Register() {
   const navigation = useNavigation();
+  const { setValue: setJwt } = useAsyncStorage("jwt", null);
   const [studentCode, setStudentCode] = useState<{
     value: string;
-    error: string | null;
+    error: string | null | undefined;
   }>({ value: "", error: null });
   const [studentNip, setStudentNip] = useState<{
     value: string;
-    error: string | null;
+    error: string | null | undefined;
   }>({ value: "", error: null });
+
+  const [login, { data, error, loading }] = useLoginMutation();
+
+  React.useEffect(() => {
+    if (error)
+      Toast.show({
+        type: "error",
+        text1: "Ups",
+        text2: "Algo salió mal, intenta de nuevo más tarde",
+      });
+  }, [error]);
+
+  React.useEffect(() => {
+    if (data?.login.__typename === "UserLoginInvalidInputError") {
+      setStudentCode({ ...studentCode, error: data.login.studentCode });
+      setStudentNip({ ...studentNip, error: data.login.studentNip });
+      if (data.login.credentials) {
+        setStudentNip({ ...studentNip, error: data.login.credentials });
+      }
+    } else if (data?.login.__typename === "UserLoginResultSuccess") {
+      setJwt(data.login.jwt);
+    }
+  }, [data]);
 
   return (
     <View style={styles.page}>
@@ -33,20 +62,43 @@ export default function Register() {
           accessibilityLabel="Código de estudiante de UDG"
           hasError={Boolean(studentCode.error)}
           name="studentCode"
-          onChange={(_, newValue) => setStudentCode(newValue)}
+          onChange={(_, newValue) =>
+            setStudentCode({ ...studentCode, value: newValue })
+          }
           value={studentCode.value}
           placeholder="Tu código"
+          keyboardType="numeric"
         />
+        {studentCode.error && <Error message={studentCode.error} />}
         <TextInput
           accessibilityLabel="Nip"
           hasError={Boolean(studentNip.error)}
           name="studentNip"
-          onChange={(_, newValue) => setStudentNip(newValue)}
+          onChange={(_, newValue) =>
+            setStudentNip({ ...studentNip, value: newValue })
+          }
           value={studentNip.value}
           secureTextEntry
           placeholder="Tú contraseña secreta"
         />
+        {studentNip.error && <Error message={studentNip.error} />}
       </View>
+      <NextButton
+        isLoading={loading}
+        onPress={() => {
+          setStudentCode({ ...studentCode, error: null });
+          setStudentNip({ ...studentNip, error: null });
+          const loginInputData = {
+            studentCode: studentCode.value,
+            studentNip: studentNip.value,
+          };
+          login({
+            variables: {
+              loginInputData,
+            },
+          });
+        }}
+      />
 
       <Text style={styles.linkText}>
         No tienes una cuenta?{" "}

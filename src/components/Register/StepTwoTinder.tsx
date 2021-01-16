@@ -7,7 +7,7 @@ import {
   StepTwo as Values,
   StepTwoErrors as Errors,
 } from "../../hooks/useRegisterForm";
-import Error from "./Error";
+import Error from "../Error";
 import { WIDTH } from "../../constants";
 const { colors } = theme;
 

@@ -1,0 +1,13 @@
+mutation Login($loginInputData: UserLoginInput!) {
+  login(loginInputData: $loginInputData) {
+    __typename
+    ... on UserLoginResultSuccess {
+      jwt
+    }
+    ... on UserLoginInvalidInputError {
+      studentCode
+      studentNip
+      credentials
+    }
+  }
+}

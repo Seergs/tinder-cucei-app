@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { WIDTH } from "../../constants";
 import PickerInput from "../Input/PickerInput";
-import Error from "./Error";
+import Error from "../Error";
 import {
   StepThree as Values,
   StepThreeErrors as Errors,

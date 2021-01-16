@@ -16,6 +16,7 @@ export default function NextButton({ isLoading, onPress }: NextButtonProps) {
       style={styles.container}
       onPress={onPress}
       activeOpacity={0.8}
+      disabled={isLoading}
     >
       <LinearGradient
         colors={[colors.primaryOrange, colors.primaryPink]}
