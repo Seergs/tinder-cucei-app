@@ -11,14 +11,26 @@ import useAuth from "./hooks/useAuth";
 const Stack = createStackNavigator();
 
 export default function App() {
-  const { isAuthenticated } = useAuth();
+  //const { isAuthenticated } = useAuth();
 
-  return isAuthenticated ? <AuthApp /> : <UnauthApp />;
+  //return isAuthenticated ? <AuthApp /> : <UnauthApp />;
+  return <AuthApp />;
 }
 
 const AuthApp = () => {
-  return <People />;
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="People" component={People} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 };
+
 const UnauthApp = () => {
   return (
     <NavigationContainer>

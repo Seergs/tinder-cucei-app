@@ -1,14 +1,18 @@
 import React from "react";
-import { View, StyleSheet, StatusBar } from "react-native";
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import theme from "../styles/theme";
 const { colors } = theme;
 
 interface TopbarProps {
   children: React.ReactNode;
-  displayStyles: {
-    [key: string]: any;
-  };
+  displayStyles: StyleProp<ViewStyle>;
 }
 
 export default function Topbar({ children, displayStyles }: TopbarProps) {
