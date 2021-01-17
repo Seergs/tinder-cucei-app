@@ -27,6 +27,7 @@ const AuthApp = () => {
       >
         <Stack.Screen name="People" component={People} />
       </Stack.Navigator>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
     </NavigationContainer>
   );
 };

@@ -37,21 +37,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     justifyContent: "center",
     alignItems: "center",
-  },
-  like: {
-    top: "50%",
-    right: -50,
+    zIndex: 999,
+    top: "40%",
     height: 100,
     width: 100,
     borderRadius: 50,
+  },
+  like: {
+    right: -50,
     backgroundColor: colors.primaryOrange,
   },
   dislike: {
-    top: "50%",
     left: -50,
-    height: 100,
-    width: 100,
-    borderRadius: 50,
     backgroundColor: colors.textBlack,
   },
 });
