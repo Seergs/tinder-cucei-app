@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Topbar from "../components/Topbar";
 import Footer from "../components/Footer";
@@ -8,25 +8,24 @@ import Swiper from "../components/Swiper";
 import theme from "../styles/theme";
 const { colors } = theme;
 
-export default function People() {
+type PeopleProps = {
+  onOpenBottomSheet: () => void;
+};
+
+const People = React.memo(({ onOpenBottomSheet }: PeopleProps) => {
   return (
     <View style={styles.page}>
       <SwipeButton type="like" />
       <SwipeButton type="dislike" />
       <Topbar displayStyles={styles.topbar}>
         <Text style={styles.topbarText}>Personas</Text>
-        <Ionicons
-          name="menu"
-          color="white"
-          size={26}
-          style={styles.topbarIcon}
-        />
       </Topbar>
       <Swiper />
-      <Footer />
+      <Footer onOpenBottomSheet={onOpenBottomSheet} />
     </View>
   );
-}
+});
+export default People;
 
 const styles = StyleSheet.create({
   page: {
@@ -35,19 +34,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   topbar: {
-    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
   topbarText: {
     color: "white",
     fontSize: 20,
     fontWeight: "bold",
-    textAlign: "center",
-    flex: 1,
-  },
-  topbarIcon: {
-    position: "absolute",
-    right: 20,
-    top: 46,
   },
 });

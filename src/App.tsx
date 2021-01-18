@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Toast from "react-native-toast-message";
@@ -6,7 +6,8 @@ import Register from "./screens/Register";
 import Login from "./screens/Login";
 import Welcome from "./screens/Welcome";
 import People from "./screens/People";
-import useAuth from "./hooks/useAuth";
+import BottomSheet, { BottomSheetOptions } from "./components/BottomSheet";
+import { Modalize } from "react-native-modalize";
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,13 @@ export default function App() {
 }
 
 const AuthApp = () => {
+  const modalizeRef = useRef<Modalize>(null);
+
+  function handleCloseBottomSheet() {}
+
+  function handleOpenBottomSheet() {
+    modalizeRef.current?.open();
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -25,8 +33,15 @@ const AuthApp = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="People" component={People} />
+        <Stack.Screen name="People">
+          {(props) => (
+            <People onOpenBottomSheet={handleOpenBottomSheet} {...props} />
+          )}
+        </Stack.Screen>
       </Stack.Navigator>
+      <BottomSheet ref={modalizeRef}>
+        <BottomSheetOptions />
+      </BottomSheet>
       <Toast ref={(ref) => Toast.setRef(ref)} />
     </NavigationContainer>
   );
