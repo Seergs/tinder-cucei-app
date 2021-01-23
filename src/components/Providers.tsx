@@ -32,16 +32,6 @@ const authLink = setContext(async (_, { headers }) => {
   };
 });
 
-/*const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-    console.log("graphqlerror", graphQLErrors);
-  }
-  if (networkError) {
-    console.log("network errors", networkError);
-  }
-});
-*/
-
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),

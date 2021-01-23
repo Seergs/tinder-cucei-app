@@ -28,6 +28,14 @@ export type MeResultSuccess = {
   id: Scalars['String'];
   studentCode: Scalars['String'];
   firstName: Scalars['String'];
+  preferences: Preferences;
+};
+
+export type Preferences = {
+  __typename?: 'Preferences';
+  preferedGender: Scalars['String'];
+  ageRange: Scalars['Int'];
+  interests: Array<Scalars['String']>;
 };
 
 export type MeResultError = {
@@ -39,6 +47,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   register: UserRegisterResult;
   login: UserLoginResult;
+  updatePreferences: UpdatePreferencesResult;
 };
 
 
@@ -49,6 +58,11 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   loginInputData: UserLoginInput;
+};
+
+
+export type MutationUpdatePreferencesArgs = {
+  preferences: UpdatePreferencesInput;
 };
 
 export type UserRegisterResult = UserRegisterResultSuccess | UserRegisterInvalidInputError;
@@ -72,6 +86,8 @@ export type User = {
   gender: Scalars['String'];
   primaryImageUrl: Scalars['String'];
   secondaryImagesUrl: Array<Scalars['String']>;
+  preferences: Preferences;
+  age: Scalars['Int'];
 };
 
 
@@ -108,6 +124,10 @@ export type UserLoginResult = UserLoginResultSuccess | UserLoginInvalidInputErro
 export type UserLoginResultSuccess = {
   __typename?: 'UserLoginResultSuccess';
   jwt: Scalars['String'];
+  id: Scalars['String'];
+  studentCode: Scalars['String'];
+  firstName: Scalars['String'];
+  preferences: Preferences;
 };
 
 export type UserLoginInvalidInputError = {
@@ -122,6 +142,26 @@ export type UserLoginInput = {
   studentNip: Scalars['String'];
 };
 
+export type UpdatePreferencesResult = UpdatePreferencesInputError | UpdatePreferencesSuccess | MeResultError;
+
+export type UpdatePreferencesInputError = {
+  __typename?: 'UpdatePreferencesInputError';
+  preferedGender?: Maybe<Scalars['String']>;
+  ageRange?: Maybe<Scalars['String']>;
+  interests?: Maybe<Scalars['String']>;
+};
+
+export type UpdatePreferencesSuccess = {
+  __typename?: 'UpdatePreferencesSuccess';
+  preferences: Preferences;
+};
+
+export type UpdatePreferencesInput = {
+  preferedGender: Scalars['String'];
+  ageRange: Scalars['Int'];
+  interests: Array<Scalars['String']>;
+};
+
 export type LoginMutationVariables = Exact<{
   loginInputData: UserLoginInput;
 }>;
@@ -131,24 +171,14 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename: 'UserLoginResultSuccess' }
-    & Pick<UserLoginResultSuccess, 'jwt'>
+    & Pick<UserLoginResultSuccess, 'jwt' | 'id' | 'firstName'>
+    & { preferences: (
+      { __typename?: 'Preferences' }
+      & Pick<Preferences, 'preferedGender' | 'ageRange' | 'interests'>
+    ) }
   ) | (
     { __typename: 'UserLoginInvalidInputError' }
     & Pick<UserLoginInvalidInputError, 'studentCode' | 'studentNip' | 'credentials'>
-  ) }
-);
-
-export type MeQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MeQuery = (
-  { __typename?: 'Query' }
-  & { me: (
-    { __typename: 'MeResultSuccess' }
-    & Pick<MeResultSuccess, 'id' | 'studentCode'>
-  ) | (
-    { __typename: 'MeResultError' }
-    & Pick<MeResultError, 'message'>
   ) }
 );
 
@@ -171,6 +201,43 @@ export type RegisterMutation = (
   ) }
 );
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me: (
+    { __typename: 'MeResultSuccess' }
+    & Pick<MeResultSuccess, 'id' | 'studentCode' | 'firstName'>
+    & { preferences: (
+      { __typename?: 'Preferences' }
+      & Pick<Preferences, 'preferedGender' | 'ageRange' | 'interests'>
+    ) }
+  ) | (
+    { __typename: 'MeResultError' }
+    & Pick<MeResultError, 'message'>
+  ) }
+);
+
+export type UpdatePreferencesMutationVariables = Exact<{
+  preferences: UpdatePreferencesInput;
+}>;
+
+
+export type UpdatePreferencesMutation = (
+  { __typename?: 'Mutation' }
+  & { updatePreferences: (
+    { __typename: 'UpdatePreferencesInputError' }
+    & Pick<UpdatePreferencesInputError, 'preferedGender' | 'ageRange' | 'interests'>
+  ) | (
+    { __typename: 'UpdatePreferencesSuccess' }
+    & { preferences: (
+      { __typename?: 'Preferences' }
+      & Pick<Preferences, 'preferedGender' | 'ageRange' | 'interests'>
+    ) }
+  ) | { __typename: 'MeResultError' } }
+);
+
 
 export const LoginDocument = gql`
     mutation Login($loginInputData: UserLoginInput!) {
@@ -178,6 +245,13 @@ export const LoginDocument = gql`
     __typename
     ... on UserLoginResultSuccess {
       jwt
+      id
+      firstName
+      preferences {
+        preferedGender
+        ageRange
+        interests
+      }
     }
     ... on UserLoginInvalidInputError {
       studentCode
@@ -212,45 +286,6 @@ export function useLoginMutation(baseOptions?: ApolloReactHooks.MutationHookOpti
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
-export const MeDocument = gql`
-    query Me {
-  me {
-    __typename
-    ... on MeResultSuccess {
-      id
-      studentCode
-    }
-    ... on MeResultError {
-      message
-    }
-  }
-}
-    `;
-
-/**
- * __useMeQuery__
- *
- * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMeQuery({
- *   variables: {
- *   },
- * });
- */
-export function useMeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MeQuery, MeQueryVariables>) {
-        return ApolloReactHooks.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
-      }
-export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
-        }
-export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
-export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
-export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($registerInputData: UserRegisterInput!) {
   register(registerInputData: $registerInputData) {
@@ -301,3 +336,92 @@ export function useRegisterMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const MeDocument = gql`
+    query Me {
+  me {
+    __typename
+    ... on MeResultSuccess {
+      id
+      studentCode
+      firstName
+      preferences {
+        preferedGender
+        ageRange
+        interests
+      }
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}
+    `;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        return ApolloReactHooks.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+      }
+export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const UpdatePreferencesDocument = gql`
+    mutation UpdatePreferences($preferences: UpdatePreferencesInput!) {
+  updatePreferences(preferences: $preferences) {
+    __typename
+    ... on UpdatePreferencesInputError {
+      preferedGender
+      ageRange
+      interests
+    }
+    ... on UpdatePreferencesSuccess {
+      preferences {
+        preferedGender
+        ageRange
+        interests
+      }
+    }
+  }
+}
+    `;
+export type UpdatePreferencesMutationFn = Apollo.MutationFunction<UpdatePreferencesMutation, UpdatePreferencesMutationVariables>;
+
+/**
+ * __useUpdatePreferencesMutation__
+ *
+ * To run a mutation, you first call `useUpdatePreferencesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePreferencesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePreferencesMutation, { data, loading, error }] = useUpdatePreferencesMutation({
+ *   variables: {
+ *      preferences: // value for 'preferences'
+ *   },
+ * });
+ */
+export function useUpdatePreferencesMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdatePreferencesMutation, UpdatePreferencesMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdatePreferencesMutation, UpdatePreferencesMutationVariables>(UpdatePreferencesDocument, baseOptions);
+      }
+export type UpdatePreferencesMutationHookResult = ReturnType<typeof useUpdatePreferencesMutation>;
+export type UpdatePreferencesMutationResult = Apollo.MutationResult<UpdatePreferencesMutation>;
+export type UpdatePreferencesMutationOptions = Apollo.BaseMutationOptions<UpdatePreferencesMutation, UpdatePreferencesMutationVariables>;

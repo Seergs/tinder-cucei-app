@@ -1,0 +1,17 @@
+mutation UpdatePreferences($preferences: UpdatePreferencesInput!) {
+  updatePreferences(preferences: $preferences) {
+    __typename
+    ... on UpdatePreferencesInputError {
+      preferedGender
+      ageRange
+      interests
+    }
+    ... on UpdatePreferencesSuccess {
+      preferences {
+        preferedGender
+        ageRange
+        interests
+      }
+    }
+  }
+}

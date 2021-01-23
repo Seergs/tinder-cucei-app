@@ -66,7 +66,10 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (data?.me.__typename === "MeResultSuccess") {
-      dispatch({ type: "success", payload: data.me });
+      dispatch({
+        type: "success",
+        payload: data.me,
+      });
     } else if (data?.me.__typename === "MeResultError") {
       dispatch({ type: "error" });
     }

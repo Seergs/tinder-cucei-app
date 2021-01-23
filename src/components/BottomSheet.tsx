@@ -1,5 +1,11 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Modalize } from "react-native-modalize";
 import Slider from "@react-native-community/slider";
 import theme from "../styles/theme";
@@ -25,59 +31,54 @@ const BottomSheet = React.forwardRef((props: BottomSheetProps, ref) => {
 
 export default BottomSheet;
 
-export const BottomSheetOptions = () => {
-  const [config, setConfig] = useState({
-    people: "men",
-    age: 20,
-    interests: ["Bailar", "Cantar", "Leer"],
-  });
-
-  const handlePeopleChange = (newValue: string) => {
-    setConfig({ ...config, people: newValue });
+type BottomSheetOptionsProps = {
+  config: {
+    preferedGender: string;
+    ageRange: number;
+    interests: string[];
   };
+  isLoading: boolean;
+  onPreferedGenderChange: (newGender: string) => void;
+  onAgeRangeChange: (newAge: number) => void;
+  onInterestsChange: (interest: string) => void;
+  onSave: () => void;
+};
 
-  const handleAgeChange = (newValue: number) => {
-    setConfig({ ...config, age: newValue });
-  };
-
-  const handleInterestsChange = (interest: string) => {
-    const interests = config.interests;
-    const index = interests.indexOf(interest);
-    if (index === -1) {
-      interests.push(interest);
-    } else {
-      interests.splice(index, 1);
-    }
-    setConfig({ ...config, interests });
-  };
-
+export const BottomSheetOptions = ({
+  config,
+  isLoading,
+  onPreferedGenderChange,
+  onAgeRangeChange,
+  onInterestsChange,
+  onSave,
+}: BottomSheetOptionsProps) => {
   return (
     <View>
       <Text style={[styles.label, { marginTop: 0 }]}>Muéstrame</Text>
-      <ButtonGroup value={config.people} onChange={handlePeopleChange}>
-        <ButtonGroup.Item name="men">Hombres</ButtonGroup.Item>
-        <ButtonGroup.Item name="women">Mujeres</ButtonGroup.Item>
-        <ButtonGroup.Item name="both">Ambos</ButtonGroup.Item>
+      <ButtonGroup
+        value={config.preferedGender}
+        onChange={onPreferedGenderChange}
+      >
+        <ButtonGroup.Item name="m">Hombres</ButtonGroup.Item>
+        <ButtonGroup.Item name="f">Mujeres</ButtonGroup.Item>
+        <ButtonGroup.Item name="b">Ambos</ButtonGroup.Item>
       </ButtonGroup>
       <Text style={styles.label}>Rango de edad a mostrar</Text>
       <Slider
         minimumValue={15}
         maximumValue={50}
         step={1}
-        value={config.age}
-        onValueChange={handleAgeChange}
+        value={config.ageRange}
+        onValueChange={onAgeRangeChange}
         thumbTintColor={colors.primaryPink}
         minimumTrackTintColor={colors.primaryOrange}
       />
       <Text style={styles.age}>
-        {config.age} años{" "}
-        {config.age < 18 ? "🤨" : config.age > 30 ? "😏" : null}
+        {config.ageRange} años{" "}
+        {config.ageRange < 18 ? "🤨" : config.ageRange > 30 ? "😏" : null}
       </Text>
       <Text style={styles.label}>Cuáles son tus intereses?</Text>
-      <MultiButtonGroup
-        values={config.interests}
-        onChange={handleInterestsChange}
-      >
+      <MultiButtonGroup values={config.interests} onChange={onInterestsChange}>
         <MultiButtonGroup.Item name="Caminar">Caminar</MultiButtonGroup.Item>
         <MultiButtonGroup.Item name="Cantar">Cantar</MultiButtonGroup.Item>
         <MultiButtonGroup.Item name="Hacer amigos">
@@ -95,8 +96,17 @@ export const BottomSheetOptions = () => {
           Tecnología
         </MultiButtonGroup.Item>
       </MultiButtonGroup>
-      <TouchableOpacity style={styles.saveButton}>
-        <Text style={styles.saveButtonText}>GUARDAR</Text>
+      <TouchableOpacity
+        style={styles.saveButton}
+        onPress={onSave}
+        disabled={isLoading}
+        activeOpacity={0.8}
+      >
+        {isLoading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text style={styles.saveButtonText}>GUARDAR</Text>
+        )}
       </TouchableOpacity>
     </View>
   );

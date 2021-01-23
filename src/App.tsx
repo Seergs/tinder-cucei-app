@@ -1,31 +1,80 @@
-import React, { useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Toast from "react-native-toast-message";
-import Register from "./screens/Register";
-import Login from "./screens/Login";
-import Welcome from "./screens/Welcome";
-import People from "./screens/People";
-import BottomSheet, { BottomSheetOptions } from "./components/BottomSheet";
+import React, { useEffect, useRef, useState } from "react";
 import { Modalize } from "react-native-modalize";
+import Toast from "react-native-toast-message";
+import { useUpdatePreferencesMutation } from "../api";
+import BottomSheet, { BottomSheetOptions } from "./components/BottomSheet";
+import useAuth from "./hooks/useAuth";
+import Login from "./screens/Login";
+import People from "./screens/People";
+import Register from "./screens/Register";
+import Welcome from "./screens/Welcome";
 
 const Stack = createStackNavigator();
 
 export default function App() {
-  //const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  //return isAuthenticated ? <AuthApp /> : <UnauthApp />;
-  return <AuthApp />;
+  return isAuthenticated ? <AuthApp /> : <UnauthApp />;
 }
 
 const AuthApp = () => {
+  const { user } = useAuth();
   const modalizeRef = useRef<Modalize>(null);
 
-  function handleCloseBottomSheet() {}
+  const [config, setConfig] = useState(user.preferences);
 
-  function handleOpenBottomSheet() {
+  const [updatePreferences, { data, loading }] = useUpdatePreferencesMutation();
+
+  useEffect(() => {
+    if (data?.updatePreferences.__typename === "UpdatePreferencesInputError")
+      Toast.show({
+        type: "error",
+        text1: "Algo salió mal, intenta de nuevo más tarde",
+      });
+    else if (data?.updatePreferences.__typename === "UpdatePreferencesSuccess")
+      Toast.show({
+        type: "success",
+        text1: "Preferencias actualizadas",
+      });
+  }, [data]);
+
+  const handlePreferedGenderChange = (newGender: string) =>
+    setConfig({ ...config, preferedGender: newGender });
+
+  const handleAgeRangeChange = (newAge: number) =>
+    setConfig({ ...config, ageRange: newAge });
+
+  const handleInterestsChange = (interest: string) => {
+    const interests = config.interests;
+
+    const index = interests.indexOf(interest);
+    if (index === -1) {
+      interests.push(interest);
+    } else {
+      interests.splice(index, 1);
+    }
+
+    setConfig({ ...config, interests });
+  };
+
+  const handleSaveConfig = async () => {
+    await updatePreferences({
+      variables: {
+        preferences: {
+          ageRange: config.ageRange,
+          interests: config.interests,
+          preferedGender: config.preferedGender,
+        },
+      },
+    });
+  };
+
+  const handleOpenBottomSheet = () => {
     modalizeRef.current?.open();
-  }
+  };
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -40,7 +89,14 @@ const AuthApp = () => {
         </Stack.Screen>
       </Stack.Navigator>
       <BottomSheet ref={modalizeRef}>
-        <BottomSheetOptions />
+        <BottomSheetOptions
+          config={config}
+          isLoading={loading}
+          onAgeRangeChange={handleAgeRangeChange}
+          onInterestsChange={handleInterestsChange}
+          onPreferedGenderChange={handlePreferedGenderChange}
+          onSave={handleSaveConfig}
+        />
       </BottomSheet>
       <Toast ref={(ref) => Toast.setRef(ref)} />
     </NavigationContainer>

@@ -1,8 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
-
 import { useLoginMutation } from "../../api";
 import NextButton from "../components/Button/NextButton";
 import Error from "../components/Error";
@@ -10,11 +9,13 @@ import TextInput from "../components/Input/TextInput";
 import Topbar from "../components/Topbar";
 import useAsyncStorage from "../hooks/useAsyncStorage";
 import theme from "../styles/theme";
+import { AuthDispatchContext } from "../context/AuthContext";
 
 const { colors } = theme;
 
 export default function Login() {
   const navigation = useNavigation();
+  const dispatch = useContext(AuthDispatchContext);
 
   const { setValue: setJwt } = useAsyncStorage("jwt", null);
 
@@ -47,6 +48,7 @@ export default function Login() {
       }
     } else if (data?.login.__typename === "UserLoginResultSuccess") {
       setJwt(data.login.jwt);
+      dispatch!({ type: "success", payload: data.login });
     }
   }, [data]);
 

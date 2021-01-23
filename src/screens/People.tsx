@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import Topbar from "../components/Topbar";
 import Footer from "../components/Footer";
 import SwipeButton from "../components/Button/SwipeButton";

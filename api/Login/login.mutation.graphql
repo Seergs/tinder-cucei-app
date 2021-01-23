@@ -3,6 +3,13 @@ mutation Login($loginInputData: UserLoginInput!) {
     __typename
     ... on UserLoginResultSuccess {
       jwt
+      id
+      firstName
+      preferences {
+        preferedGender
+        ageRange
+        interests
+      }
     }
     ... on UserLoginInvalidInputError {
       studentCode
