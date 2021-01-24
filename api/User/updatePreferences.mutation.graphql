@@ -3,13 +3,15 @@ mutation UpdatePreferences($preferences: UpdatePreferencesInput!) {
     __typename
     ... on UpdatePreferencesInputError {
       preferedGender
-      ageRange
+      minAge
+      maxAge
       interests
     }
     ... on UpdatePreferencesSuccess {
       preferences {
         preferedGender
-        ageRange
+        minAge
+        maxAge
         interests
       }
     }

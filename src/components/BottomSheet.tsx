@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Modalize } from "react-native-modalize";
-import Slider from "@react-native-community/slider";
+import RangeSlider from "react-native-range-slider-expo";
 import theme from "../styles/theme";
 import { ButtonGroup, MultiButtonGroup } from "./ButtonGroup";
 const { colors } = theme;
@@ -22,7 +22,7 @@ const BottomSheet = React.forwardRef((props: BottomSheetProps, ref) => {
       modalStyle={{ padding: 30 }}
       ref={ref as any}
       snapPoint={300}
-      modalHeight={600}
+      modalHeight={700}
     >
       {props.children}
     </Modalize>
@@ -34,12 +34,14 @@ export default BottomSheet;
 type BottomSheetOptionsProps = {
   config: {
     preferedGender: string;
-    ageRange: number;
+    minAge: number;
+    maxAge: number;
     interests: string[];
   };
   isLoading: boolean;
   onPreferedGenderChange: (newGender: string) => void;
-  onAgeRangeChange: (newAge: number) => void;
+  onMinAgeChange: (age: number) => void;
+  onMaxAgeChange: (age: number) => void;
   onInterestsChange: (interest: string) => void;
   onSave: () => void;
 };
@@ -48,7 +50,8 @@ export const BottomSheetOptions = ({
   config,
   isLoading,
   onPreferedGenderChange,
-  onAgeRangeChange,
+  onMinAgeChange,
+  onMaxAgeChange,
   onInterestsChange,
   onSave,
 }: BottomSheetOptionsProps) => {
@@ -64,18 +67,21 @@ export const BottomSheetOptions = ({
         <ButtonGroup.Item name="b">Ambos</ButtonGroup.Item>
       </ButtonGroup>
       <Text style={styles.label}>Rango de edad a mostrar</Text>
-      <Slider
-        minimumValue={15}
-        maximumValue={50}
-        step={1}
-        value={config.ageRange}
-        onValueChange={onAgeRangeChange}
-        thumbTintColor={colors.primaryPink}
-        minimumTrackTintColor={colors.primaryOrange}
+      <RangeSlider
+        min={15}
+        max={50}
+        fromValueOnChange={onMinAgeChange}
+        toValueOnChange={onMaxAgeChange}
+        initialFromValue={config.minAge}
+        initialToValue={config.maxAge}
+        styleSize="small"
+        fromKnobColor={colors.primaryOrange}
+        toKnobColor={colors.primaryOrange}
+        inRangeBarColor={colors.textGray}
+        valueLabelsBackgroundColor={colors.textDarkGray}
       />
       <Text style={styles.age}>
-        {config.ageRange} años{" "}
-        {config.ageRange < 18 ? "🤨" : config.ageRange > 30 ? "😏" : null}
+        {config.minAge < 18 ? "🤨" : config.maxAge > 30 ? "😏" : null}
       </Text>
       <Text style={styles.label}>Cuáles son tus intereses?</Text>
       <MultiButtonGroup values={config.interests} onChange={onInterestsChange}>

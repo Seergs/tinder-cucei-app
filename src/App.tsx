@@ -43,11 +43,16 @@ const AuthApp = () => {
   const handlePreferedGenderChange = (newGender: string) =>
     setConfig({ ...config, preferedGender: newGender });
 
-  const handleAgeRangeChange = (newAge: number) =>
-    setConfig({ ...config, ageRange: newAge });
+  const handleMinAgeChange = (age: number) => {
+    setConfig({ ...config, minAge: age });
+  };
+
+  const handleMaxAgeChange = (age: number) => {
+    setConfig({ ...config, maxAge: age });
+  };
 
   const handleInterestsChange = (interest: string) => {
-    const interests = config.interests;
+    const interests = [...config.interests];
 
     const index = interests.indexOf(interest);
     if (index === -1) {
@@ -63,7 +68,8 @@ const AuthApp = () => {
     await updatePreferences({
       variables: {
         preferences: {
-          ageRange: config.ageRange,
+          minAge: config.minAge,
+          maxAge: config.maxAge,
           interests: config.interests,
           preferedGender: config.preferedGender,
         },
@@ -92,7 +98,8 @@ const AuthApp = () => {
         <BottomSheetOptions
           config={config}
           isLoading={loading}
-          onAgeRangeChange={handleAgeRangeChange}
+          onMinAgeChange={handleMinAgeChange}
+          onMaxAgeChange={handleMaxAgeChange}
           onInterestsChange={handleInterestsChange}
           onPreferedGenderChange={handlePreferedGenderChange}
           onSave={handleSaveConfig}

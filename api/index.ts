@@ -19,6 +19,12 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me: MeResult;
+  people: PeopleResult;
+};
+
+
+export type QueryPeopleArgs = {
+  limit: Scalars['Float'];
 };
 
 export type MeResult = MeResultSuccess | MeResultError;
@@ -34,7 +40,8 @@ export type MeResultSuccess = {
 export type Preferences = {
   __typename?: 'Preferences';
   preferedGender: Scalars['String'];
-  ageRange: Scalars['Int'];
+  minAge: Scalars['Int'];
+  maxAge: Scalars['Int'];
   interests: Array<Scalars['String']>;
 };
 
@@ -42,6 +49,27 @@ export type MeResultError = {
   __typename?: 'MeResultError';
   message: Scalars['String'];
 };
+
+export type PeopleResult = PeopleSuccess | MeResultError;
+
+export type PeopleSuccess = {
+  __typename?: 'PeopleSuccess';
+  people: Array<Person>;
+};
+
+export type Person = {
+  __typename?: 'Person';
+  id: Scalars['String'];
+  career: Scalars['String'];
+  birthday: Scalars['DateTime'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  primaryImageUrl: Scalars['String'];
+  secondaryImagesUrl: Array<Scalars['String']>;
+  viewId: Scalars['String'];
+  age: Scalars['Int'];
+};
+
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -89,7 +117,6 @@ export type User = {
   preferences: Preferences;
   age: Scalars['Int'];
 };
-
 
 export type UserRegisterInvalidInputError = {
   __typename?: 'UserRegisterInvalidInputError';
@@ -147,7 +174,8 @@ export type UpdatePreferencesResult = UpdatePreferencesInputError | UpdatePrefer
 export type UpdatePreferencesInputError = {
   __typename?: 'UpdatePreferencesInputError';
   preferedGender?: Maybe<Scalars['String']>;
-  ageRange?: Maybe<Scalars['String']>;
+  minAge?: Maybe<Scalars['String']>;
+  maxAge?: Maybe<Scalars['String']>;
   interests?: Maybe<Scalars['String']>;
 };
 
@@ -158,7 +186,8 @@ export type UpdatePreferencesSuccess = {
 
 export type UpdatePreferencesInput = {
   preferedGender: Scalars['String'];
-  ageRange: Scalars['Int'];
+  minAge: Scalars['Int'];
+  maxAge: Scalars['Int'];
   interests: Array<Scalars['String']>;
 };
 
@@ -174,7 +203,7 @@ export type LoginMutation = (
     & Pick<UserLoginResultSuccess, 'jwt' | 'id' | 'firstName'>
     & { preferences: (
       { __typename?: 'Preferences' }
-      & Pick<Preferences, 'preferedGender' | 'ageRange' | 'interests'>
+      & Pick<Preferences, 'preferedGender' | 'minAge' | 'maxAge' | 'interests'>
     ) }
   ) | (
     { __typename: 'UserLoginInvalidInputError' }
@@ -211,7 +240,7 @@ export type MeQuery = (
     & Pick<MeResultSuccess, 'id' | 'studentCode' | 'firstName'>
     & { preferences: (
       { __typename?: 'Preferences' }
-      & Pick<Preferences, 'preferedGender' | 'ageRange' | 'interests'>
+      & Pick<Preferences, 'preferedGender' | 'minAge' | 'maxAge' | 'interests'>
     ) }
   ) | (
     { __typename: 'MeResultError' }
@@ -228,12 +257,12 @@ export type UpdatePreferencesMutation = (
   { __typename?: 'Mutation' }
   & { updatePreferences: (
     { __typename: 'UpdatePreferencesInputError' }
-    & Pick<UpdatePreferencesInputError, 'preferedGender' | 'ageRange' | 'interests'>
+    & Pick<UpdatePreferencesInputError, 'preferedGender' | 'minAge' | 'maxAge' | 'interests'>
   ) | (
     { __typename: 'UpdatePreferencesSuccess' }
     & { preferences: (
       { __typename?: 'Preferences' }
-      & Pick<Preferences, 'preferedGender' | 'ageRange' | 'interests'>
+      & Pick<Preferences, 'preferedGender' | 'minAge' | 'maxAge' | 'interests'>
     ) }
   ) | { __typename: 'MeResultError' } }
 );
@@ -249,7 +278,8 @@ export const LoginDocument = gql`
       firstName
       preferences {
         preferedGender
-        ageRange
+        minAge
+        maxAge
         interests
       }
     }
@@ -346,7 +376,8 @@ export const MeDocument = gql`
       firstName
       preferences {
         preferedGender
-        ageRange
+        minAge
+        maxAge
         interests
       }
     }
@@ -387,13 +418,15 @@ export const UpdatePreferencesDocument = gql`
     __typename
     ... on UpdatePreferencesInputError {
       preferedGender
-      ageRange
+      minAge
+      maxAge
       interests
     }
     ... on UpdatePreferencesSuccess {
       preferences {
         preferedGender
-        ageRange
+        minAge
+        maxAge
         interests
       }
     }
