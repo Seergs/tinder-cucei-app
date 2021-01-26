@@ -1,0 +1,18 @@
+query People($limit: Int!) {
+  people(limit: $limit) {
+    __typename
+    ... on PeopleSuccess {
+      people {
+        firstName
+        lastName
+        career
+        age
+        primaryImageUrl
+        viewId
+      }
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}

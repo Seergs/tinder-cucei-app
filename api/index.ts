@@ -24,7 +24,7 @@ export type Query = {
 
 
 export type QueryPeopleArgs = {
-  limit: Scalars['Float'];
+  limit: Scalars['Int'];
 };
 
 export type MeResult = MeResultSuccess | MeResultError;
@@ -211,6 +211,25 @@ export type LoginMutation = (
   ) }
 );
 
+export type PeopleQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type PeopleQuery = (
+  { __typename?: 'Query' }
+  & { people: (
+    { __typename: 'PeopleSuccess' }
+    & { people: Array<(
+      { __typename?: 'Person' }
+      & Pick<Person, 'firstName' | 'lastName' | 'career' | 'age' | 'primaryImageUrl' | 'viewId'>
+    )> }
+  ) | (
+    { __typename: 'MeResultError' }
+    & Pick<MeResultError, 'message'>
+  ) }
+);
+
 export type RegisterMutationVariables = Exact<{
   registerInputData: UserRegisterInput;
 }>;
@@ -316,6 +335,52 @@ export function useLoginMutation(baseOptions?: ApolloReactHooks.MutationHookOpti
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const PeopleDocument = gql`
+    query People($limit: Int!) {
+  people(limit: $limit) {
+    __typename
+    ... on PeopleSuccess {
+      people {
+        firstName
+        lastName
+        career
+        age
+        primaryImageUrl
+        viewId
+      }
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}
+    `;
+
+/**
+ * __usePeopleQuery__
+ *
+ * To run a query within a React component, call `usePeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePeopleQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function usePeopleQuery(baseOptions: ApolloReactHooks.QueryHookOptions<PeopleQuery, PeopleQueryVariables>) {
+        return ApolloReactHooks.useQuery<PeopleQuery, PeopleQueryVariables>(PeopleDocument, baseOptions);
+      }
+export function usePeopleLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PeopleQuery, PeopleQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<PeopleQuery, PeopleQueryVariables>(PeopleDocument, baseOptions);
+        }
+export type PeopleQueryHookResult = ReturnType<typeof usePeopleQuery>;
+export type PeopleLazyQueryHookResult = ReturnType<typeof usePeopleLazyQuery>;
+export type PeopleQueryResult = Apollo.QueryResult<PeopleQuery, PeopleQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($registerInputData: UserRegisterInput!) {
   register(registerInputData: $registerInputData) {
