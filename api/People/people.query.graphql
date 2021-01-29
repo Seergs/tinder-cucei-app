@@ -8,6 +8,7 @@ query People($limit: Int!) {
         career
         age
         primaryImageUrl
+        interests
         viewId
       }
     }

@@ -6,12 +6,13 @@ const { colors } = theme;
 
 type ButtonProps = {
   type: "dislike" | "like";
+  onPress: () => void;
 };
 
-export default function SwipeButton({ type }: ButtonProps) {
+export default function SwipeButton({ type, onPress }: ButtonProps) {
   if (type === "like")
     return (
-      <TouchableOpacity style={[styles.button, styles.like]}>
+      <TouchableOpacity style={[styles.button, styles.like]} onPress={onPress}>
         <AntDesign
           name="check"
           size={26}
@@ -21,7 +22,7 @@ export default function SwipeButton({ type }: ButtonProps) {
       </TouchableOpacity>
     );
   return (
-    <TouchableOpacity style={[styles.button, styles.dislike]}>
+    <TouchableOpacity style={[styles.button, styles.dislike]} onPress={onPress}>
       <AntDesign
         name="close"
         size={26}

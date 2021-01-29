@@ -1,86 +1,55 @@
-import React from "react";
-import { Text, View, StyleSheet, Image } from "react-native";
+import React, { forwardRef } from "react";
+import { Text, View, StyleSheet } from "react-native";
 import DeckSwiper from "react-native-deck-swiper";
 import Toast from "react-native-toast-message";
 import FullpageSpinner from "./FullpageSpinner";
-import theme from "../styles/theme";
 import { usePeopleQuery } from "../../api";
-const { colors } = theme;
+import useAuth from "../hooks/useAuth";
+import Card from "./Card";
 
-export default function Swiper() {
+const Swiper = forwardRef<DeckSwiper<any>>((_, ref) => {
   const { data, error, loading } = usePeopleQuery({
     variables: { limit: 20 },
   });
+  const { user } = useAuth();
 
   if (loading) return <FullpageSpinner />;
   if (error || data!.people.__typename === "MeResultError")
     return <Text>Ups</Text>;
-  return (
-    <View style={styles.container}>
-      <DeckSwiper
-        cards={data!.people.people}
-        cardIndex={0}
-        backgroundColor="transparent"
-        stackSize={3}
-        renderCard={(card) => {
-          return (
-            <View style={styles.card}>
-              <Image
-                source={{ uri: card.primaryImageUrl }}
-                style={styles.image}
-              />
-              <Text style={styles.personName}>
-                {card.firstName} {card.lastName}, {card.age}
-              </Text>
-              <Text style={styles.career}>{card.career}</Text>
-              <View style={styles.separator} />
-            </View>
-          );
-        }}
-        onSwipedAll={() =>
-          Toast.show({
-            type: "info",
-            text1: "¡Wow! Parece que has deslizado demasiado",
-            text2: "Vuelve más tarde para encontrar más gente",
-          })
-        }
-      />
-    </View>
-  );
-}
 
+  if (data?.people.people.length) {
+    return (
+      <View style={styles.container}>
+        <DeckSwiper
+          ref={ref}
+          cards={data!.people.people}
+          backgroundColor="transparent"
+          stackSize={3}
+          verticalSwipe={false}
+          renderCard={(card) => (
+            <Card card={card} userInterests={user.preferences.interests} />
+          )}
+          onSwipedAll={() =>
+            Toast.show({
+              type: "info",
+              text1: "¡Wow! Parece que has deslizado demasiado",
+              text2: "Vuelve más tarde para encontrar más gente",
+            })
+          }
+        />
+      </View>
+    );
+  }
+  return (
+    <Text>
+      No hay personas para mostrar, modifica el filtro o vuelve más tarde
+    </Text>
+  );
+});
+
+export default Swiper;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  card: {
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 15,
-    elevation: 3,
-  },
-  image: {
-    width: "100%",
-    height: 400,
-    alignSelf: "center",
-  },
-  personName: {
-    marginTop: 10,
-    fontWeight: "bold",
-    fontSize: 20,
-    color: colors.textBlack,
-  },
-  career: {
-    color: colors.textGray,
-    marginBottom: 20,
-  },
-  separator: {
-    width: "100%",
-    height: 1,
-    backgroundColor: colors.textLightGray,
-  },
-  interests: {
-    color: colors.textGray,
-    marginTop: 20,
   },
 });

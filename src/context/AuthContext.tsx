@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect, createContext } from "react";
 import { useMeQuery } from "../../api";
+import { omitPropFromObject } from "../utils/utils";
 
 type Type = "idle" | "pending" | "success" | "error" | "logout";
 type Dispatch = (action: { type: Type; payload?: any }) => void;
@@ -9,7 +10,13 @@ type State = {
   error: null | string;
 };
 
-export const AuthStateContext = createContext<State | undefined>(undefined);
+const initialState: State = {
+  error: null,
+  status: "idle",
+  user: null,
+};
+
+export const AuthStateContext = createContext<State>(initialState);
 export const AuthDispatchContext = createContext<Dispatch | undefined>(
   undefined
 );
@@ -50,12 +57,6 @@ function authReducer(
   }
 }
 
-const initialState: State = {
-  error: null,
-  status: "idle",
-  user: null,
-};
-
 export const AuthProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const { data, error } = useMeQuery();
@@ -66,9 +67,10 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (data?.me.__typename === "MeResultSuccess") {
+      const user = omitPropFromObject("__typename", data.me);
       dispatch({
         type: "success",
-        payload: data.me,
+        payload: user,
       });
     } else if (data?.me.__typename === "MeResultError") {
       dispatch({ type: "error" });

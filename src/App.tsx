@@ -5,6 +5,7 @@ import { Modalize } from "react-native-modalize";
 import Toast from "react-native-toast-message";
 import { useUpdatePreferencesMutation } from "../api";
 import BottomSheet, { BottomSheetOptions } from "./components/BottomSheet";
+import FullpageSpinner from "./components/FullpageSpinner";
 import useAuth from "./hooks/useAuth";
 import Login from "./screens/Login";
 import People from "./screens/People";
@@ -14,7 +15,10 @@ import Welcome from "./screens/Welcome";
 const Stack = createStackNavigator();
 
 export default function App() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isPending } = useAuth();
+  console.log({ isPending });
+
+  if (isPending) return <FullpageSpinner />;
 
   return isAuthenticated ? <AuthApp /> : <UnauthApp />;
 }
@@ -25,7 +29,9 @@ const AuthApp = () => {
 
   const [config, setConfig] = useState(user.preferences);
 
-  const [updatePreferences, { data, loading }] = useUpdatePreferencesMutation();
+  const [updatePreferences, { data, loading }] = useUpdatePreferencesMutation({
+    refetchQueries: ["people"],
+  });
 
   useEffect(() => {
     if (data?.updatePreferences.__typename === "UpdatePreferencesInputError")

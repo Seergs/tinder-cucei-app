@@ -15,3 +15,9 @@ export function getAgeFromDateOfBirth(dob: Date) {
 
   return Math.abs(age.getUTCFullYear() - 1970);
 }
+
+export function omitPropFromObject(key: string, obj: any) {
+  const { [key]: omited, ...rest } = obj;
+
+  return rest;
+}

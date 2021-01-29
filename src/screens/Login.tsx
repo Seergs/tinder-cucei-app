@@ -10,6 +10,7 @@ import Topbar from "../components/Topbar";
 import useAsyncStorage from "../hooks/useAsyncStorage";
 import theme from "../styles/theme";
 import { AuthDispatchContext } from "../context/AuthContext";
+import { omitPropFromObject } from "../utils/utils";
 
 const { colors } = theme;
 
@@ -48,7 +49,8 @@ export default function Login() {
       }
     } else if (data?.login.__typename === "UserLoginResultSuccess") {
       setJwt(data.login.jwt);
-      dispatch!({ type: "success", payload: data.login });
+      const user = omitPropFromObject("__typename", data.login);
+      dispatch!({ type: "success", payload: user });
     }
   }, [data]);
 

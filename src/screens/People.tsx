@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import DeckSwiper from "react-native-deck-swiper";
 import Topbar from "../components/Topbar";
 import Footer from "../components/Footer";
 import SwipeButton from "../components/Button/SwipeButton";
@@ -12,14 +13,24 @@ type PeopleProps = {
 };
 
 const People = React.memo(({ onOpenBottomSheet }: PeopleProps) => {
+  const swiperRef = useRef<DeckSwiper<any>>(null);
+
   return (
     <View style={styles.page}>
-      <SwipeButton type="like" />
-      <SwipeButton type="dislike" />
+      <SwipeButton
+        type="like"
+        onPress={() => swiperRef.current?.swipeRight()}
+      />
+      <SwipeButton
+        type="dislike"
+        onPress={() => {
+          swiperRef.current?.swipeLeft();
+        }}
+      />
       <Topbar displayStyles={styles.topbar}>
         <Text style={styles.topbarText}>Personas</Text>
       </Topbar>
-      <Swiper />
+      <Swiper ref={swiperRef} />
       <Footer onOpenBottomSheet={onOpenBottomSheet} />
     </View>
   );
