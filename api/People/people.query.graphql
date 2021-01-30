@@ -3,13 +3,13 @@ query People($limit: Int!) {
     __typename
     ... on PeopleSuccess {
       people {
+        id
         firstName
         lastName
         career
         age
         primaryImageUrl
         interests
-        viewId
       }
     }
     ... on MeResultError {

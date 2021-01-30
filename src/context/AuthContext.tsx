@@ -78,7 +78,9 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, [data]);
 
   useEffect(() => {
-    dispatch({ type: "error" });
+    if (error) {
+      dispatch({ type: "error" });
+    }
   }, [error]);
 
   return (

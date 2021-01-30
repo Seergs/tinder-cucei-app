@@ -12,7 +12,11 @@ type ButtonProps = {
 export default function SwipeButton({ type, onPress }: ButtonProps) {
   if (type === "like")
     return (
-      <TouchableOpacity style={[styles.button, styles.like]} onPress={onPress}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={[styles.button, styles.like]}
+        onPress={onPress}
+      >
         <AntDesign
           name="check"
           size={26}
@@ -22,7 +26,11 @@ export default function SwipeButton({ type, onPress }: ButtonProps) {
       </TouchableOpacity>
     );
   return (
-    <TouchableOpacity style={[styles.button, styles.dislike]} onPress={onPress}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={[styles.button, styles.dislike]}
+      onPress={onPress}
+    >
       <AntDesign
         name="close"
         size={26}

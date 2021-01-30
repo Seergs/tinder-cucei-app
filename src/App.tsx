@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect, useRef, useState } from "react";
 import { Modalize } from "react-native-modalize";
 import Toast from "react-native-toast-message";
-import { useUpdatePreferencesMutation } from "../api";
+import { useUpdatePreferencesMutation, PeopleDocument } from "../api";
 import BottomSheet, { BottomSheetOptions } from "./components/BottomSheet";
 import FullpageSpinner from "./components/FullpageSpinner";
 import useAuth from "./hooks/useAuth";
@@ -16,7 +16,6 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const { isAuthenticated, isPending } = useAuth();
-  console.log({ isPending });
 
   if (isPending) return <FullpageSpinner />;
 
@@ -30,7 +29,13 @@ const AuthApp = () => {
   const [config, setConfig] = useState(user.preferences);
 
   const [updatePreferences, { data, loading }] = useUpdatePreferencesMutation({
-    refetchQueries: ["people"],
+    refetchQueries: [
+      {
+        query: PeopleDocument,
+        variables: { limit: 20 },
+      },
+    ],
+    awaitRefetchQueries: true,
   });
 
   useEffect(() => {

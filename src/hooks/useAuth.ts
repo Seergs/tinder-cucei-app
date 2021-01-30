@@ -4,10 +4,10 @@ import { AuthStateContext, AuthDispatchContext } from "../context/AuthContext";
 const useAuth = () => {
   const state = useContext(AuthStateContext);
   const dispatch = useContext(AuthDispatchContext);
-  const isPending = state?.status === "pending";
-  const isError = state?.status === "error";
-  const isSuccess = state?.status === "success";
-  const isAuthenticated = state?.user && isSuccess;
+  const isPending = state.status === "pending";
+  const isError = state.status === "error";
+  const isSuccess = state.status === "success";
+  const isAuthenticated = state.user && isSuccess;
 
   return {
     ...state,

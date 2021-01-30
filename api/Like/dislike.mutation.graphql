@@ -1,0 +1,17 @@
+mutation Dislike($targetUserId: String!) {
+  dislikePerson(targetUserId: $targetUserId) {
+    __typename
+    ... on LikeSuccess {
+      view {
+        liked
+      }
+      match
+    }
+    ... on UserNotFoundError {
+      message
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}

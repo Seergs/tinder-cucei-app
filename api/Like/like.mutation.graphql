@@ -1,0 +1,17 @@
+mutation Like($targetUserId: String!) {
+  likePerson(targetUserId: $targetUserId) {
+    __typename
+    ... on LikeSuccess {
+      view {
+        liked
+      }
+      match
+    }
+    ... on UserNotFoundError {
+      message
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}

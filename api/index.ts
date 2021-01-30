@@ -66,7 +66,6 @@ export type Person = {
   lastName: Scalars['String'];
   primaryImageUrl: Scalars['String'];
   secondaryImagesUrl: Array<Scalars['String']>;
-  viewId: Scalars['String'];
   age: Scalars['Int'];
   interests: Array<Scalars['String']>;
 };
@@ -77,6 +76,8 @@ export type Mutation = {
   register: UserRegisterResult;
   login: UserLoginResult;
   updatePreferences: UpdatePreferencesResult;
+  likePerson: LikeResult;
+  dislikePerson: LikeResult;
 };
 
 
@@ -92,6 +93,16 @@ export type MutationLoginArgs = {
 
 export type MutationUpdatePreferencesArgs = {
   preferences: UpdatePreferencesInput;
+};
+
+
+export type MutationLikePersonArgs = {
+  targetUserId: Scalars['String'];
+};
+
+
+export type MutationDislikePersonArgs = {
+  targetUserId: Scalars['String'];
 };
 
 export type UserRegisterResult = UserRegisterResultSuccess | UserRegisterInvalidInputError;
@@ -192,6 +203,73 @@ export type UpdatePreferencesInput = {
   interests: Array<Scalars['String']>;
 };
 
+export type LikeResult = LikeSuccess | MeResultError | UserNotFoundError;
+
+export type LikeSuccess = {
+  __typename?: 'LikeSuccess';
+  view: View;
+  match: Scalars['Boolean'];
+};
+
+export type View = {
+  __typename?: 'View';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  liked: Scalars['Boolean'];
+};
+
+export type UserNotFoundError = {
+  __typename?: 'UserNotFoundError';
+  message: Scalars['String'];
+};
+
+export type DislikeMutationVariables = Exact<{
+  targetUserId: Scalars['String'];
+}>;
+
+
+export type DislikeMutation = (
+  { __typename?: 'Mutation' }
+  & { dislikePerson: (
+    { __typename: 'LikeSuccess' }
+    & Pick<LikeSuccess, 'match'>
+    & { view: (
+      { __typename?: 'View' }
+      & Pick<View, 'liked'>
+    ) }
+  ) | (
+    { __typename: 'MeResultError' }
+    & Pick<MeResultError, 'message'>
+  ) | (
+    { __typename: 'UserNotFoundError' }
+    & Pick<UserNotFoundError, 'message'>
+  ) }
+);
+
+export type LikeMutationVariables = Exact<{
+  targetUserId: Scalars['String'];
+}>;
+
+
+export type LikeMutation = (
+  { __typename?: 'Mutation' }
+  & { likePerson: (
+    { __typename: 'LikeSuccess' }
+    & Pick<LikeSuccess, 'match'>
+    & { view: (
+      { __typename?: 'View' }
+      & Pick<View, 'liked'>
+    ) }
+  ) | (
+    { __typename: 'MeResultError' }
+    & Pick<MeResultError, 'message'>
+  ) | (
+    { __typename: 'UserNotFoundError' }
+    & Pick<UserNotFoundError, 'message'>
+  ) }
+);
+
 export type LoginMutationVariables = Exact<{
   loginInputData: UserLoginInput;
 }>;
@@ -223,7 +301,7 @@ export type PeopleQuery = (
     { __typename: 'PeopleSuccess' }
     & { people: Array<(
       { __typename?: 'Person' }
-      & Pick<Person, 'firstName' | 'lastName' | 'career' | 'age' | 'primaryImageUrl' | 'interests' | 'viewId'>
+      & Pick<Person, 'id' | 'firstName' | 'lastName' | 'career' | 'age' | 'primaryImageUrl' | 'interests'>
     )> }
   ) | (
     { __typename: 'MeResultError' }
@@ -288,6 +366,94 @@ export type UpdatePreferencesMutation = (
 );
 
 
+export const DislikeDocument = gql`
+    mutation Dislike($targetUserId: String!) {
+  dislikePerson(targetUserId: $targetUserId) {
+    __typename
+    ... on LikeSuccess {
+      view {
+        liked
+      }
+      match
+    }
+    ... on UserNotFoundError {
+      message
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}
+    `;
+export type DislikeMutationFn = Apollo.MutationFunction<DislikeMutation, DislikeMutationVariables>;
+
+/**
+ * __useDislikeMutation__
+ *
+ * To run a mutation, you first call `useDislikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDislikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [dislikeMutation, { data, loading, error }] = useDislikeMutation({
+ *   variables: {
+ *      targetUserId: // value for 'targetUserId'
+ *   },
+ * });
+ */
+export function useDislikeMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DislikeMutation, DislikeMutationVariables>) {
+        return ApolloReactHooks.useMutation<DislikeMutation, DislikeMutationVariables>(DislikeDocument, baseOptions);
+      }
+export type DislikeMutationHookResult = ReturnType<typeof useDislikeMutation>;
+export type DislikeMutationResult = Apollo.MutationResult<DislikeMutation>;
+export type DislikeMutationOptions = Apollo.BaseMutationOptions<DislikeMutation, DislikeMutationVariables>;
+export const LikeDocument = gql`
+    mutation Like($targetUserId: String!) {
+  likePerson(targetUserId: $targetUserId) {
+    __typename
+    ... on LikeSuccess {
+      view {
+        liked
+      }
+      match
+    }
+    ... on UserNotFoundError {
+      message
+    }
+    ... on MeResultError {
+      message
+    }
+  }
+}
+    `;
+export type LikeMutationFn = Apollo.MutationFunction<LikeMutation, LikeMutationVariables>;
+
+/**
+ * __useLikeMutation__
+ *
+ * To run a mutation, you first call `useLikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeMutation, { data, loading, error }] = useLikeMutation({
+ *   variables: {
+ *      targetUserId: // value for 'targetUserId'
+ *   },
+ * });
+ */
+export function useLikeMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LikeMutation, LikeMutationVariables>) {
+        return ApolloReactHooks.useMutation<LikeMutation, LikeMutationVariables>(LikeDocument, baseOptions);
+      }
+export type LikeMutationHookResult = ReturnType<typeof useLikeMutation>;
+export type LikeMutationResult = Apollo.MutationResult<LikeMutation>;
+export type LikeMutationOptions = Apollo.BaseMutationOptions<LikeMutation, LikeMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($loginInputData: UserLoginInput!) {
   login(loginInputData: $loginInputData) {
@@ -342,13 +508,13 @@ export const PeopleDocument = gql`
     __typename
     ... on PeopleSuccess {
       people {
+        id
         firstName
         lastName
         career
         age
         primaryImageUrl
         interests
-        viewId
       }
     }
     ... on MeResultError {
