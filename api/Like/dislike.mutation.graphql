@@ -5,7 +5,9 @@ mutation Dislike($targetUserId: String!) {
       view {
         liked
       }
-      match
+      match {
+        id
+      }
     }
     ... on UserNotFoundError {
       message

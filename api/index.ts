@@ -20,6 +20,7 @@ export type Query = {
   __typename?: 'Query';
   me: MeResult;
   people: PeopleResult;
+  matches?: Maybe<Array<Match>>;
 };
 
 
@@ -70,6 +71,13 @@ export type Person = {
   interests: Array<Scalars['String']>;
 };
 
+
+export type Match = {
+  __typename?: 'Match';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -208,7 +216,7 @@ export type LikeResult = LikeSuccess | MeResultError | UserNotFoundError;
 export type LikeSuccess = {
   __typename?: 'LikeSuccess';
   view: View;
-  match: Scalars['Boolean'];
+  match?: Maybe<Match>;
 };
 
 export type View = {
@@ -233,11 +241,13 @@ export type DislikeMutation = (
   { __typename?: 'Mutation' }
   & { dislikePerson: (
     { __typename: 'LikeSuccess' }
-    & Pick<LikeSuccess, 'match'>
     & { view: (
       { __typename?: 'View' }
       & Pick<View, 'liked'>
-    ) }
+    ), match?: Maybe<(
+      { __typename?: 'Match' }
+      & Pick<Match, 'id'>
+    )> }
   ) | (
     { __typename: 'MeResultError' }
     & Pick<MeResultError, 'message'>
@@ -256,11 +266,13 @@ export type LikeMutation = (
   { __typename?: 'Mutation' }
   & { likePerson: (
     { __typename: 'LikeSuccess' }
-    & Pick<LikeSuccess, 'match'>
     & { view: (
       { __typename?: 'View' }
       & Pick<View, 'liked'>
-    ) }
+    ), match?: Maybe<(
+      { __typename?: 'Match' }
+      & Pick<Match, 'id'>
+    )> }
   ) | (
     { __typename: 'MeResultError' }
     & Pick<MeResultError, 'message'>
@@ -374,7 +386,9 @@ export const DislikeDocument = gql`
       view {
         liked
       }
-      match
+      match {
+        id
+      }
     }
     ... on UserNotFoundError {
       message
@@ -418,7 +432,9 @@ export const LikeDocument = gql`
       view {
         liked
       }
-      match
+      match {
+        id
+      }
     }
     ... on UserNotFoundError {
       message

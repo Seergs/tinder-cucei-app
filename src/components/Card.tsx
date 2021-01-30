@@ -15,10 +15,8 @@ type CardProps = {
   userInterests: string[];
 };
 
-export default function Card({
-  card: { firstName, lastName, age, career, interests, primaryImageUrl },
-  userInterests,
-}: CardProps) {
+export default function Card({ card, userInterests }: CardProps) {
+  const { firstName, lastName, age, career, interests, primaryImageUrl } = card;
   return (
     <View style={styles.card}>
       <Image source={{ uri: primaryImageUrl }} style={styles.image} />

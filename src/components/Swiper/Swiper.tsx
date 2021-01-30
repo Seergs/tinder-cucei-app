@@ -1,54 +1,43 @@
 import React from "react";
-import { Text } from "react-native";
 import DeckSwiper from "react-native-deck-swiper";
-import Toast from "react-native-toast-message";
 import useAuth from "../../hooks/useAuth";
 import Card from "../Card";
 
+type Person = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  career: string;
+  age: number;
+  primaryImageUrl: string;
+  interests: string[];
+};
+
 type SwiperProps = {
-  people: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    career: string;
-    age: number;
-    primaryImageUrl: string;
-    interests: string[];
-  }[];
+  people: Person[];
   onLike: (index: number) => void;
   onDislike: (index: number) => void;
+  onFinish: () => void;
 };
 
 const Swiper = React.forwardRef<DeckSwiper<any>, SwiperProps>(
-  ({ people, onLike, onDislike }, ref) => {
+  ({ people, onLike, onDislike, onFinish }, ref) => {
     const { user } = useAuth();
-    if (!people.length) {
-      return (
-        <Text>
-          No se encontraron personas, cambia el filtro o vuelve más tarde
-        </Text>
-      );
-    }
 
     return (
       <DeckSwiper
         ref={ref}
+        stackSize={people.length > 3 ? 3 : people.length}
         cards={people}
-        backgroundColor="transparent"
-        stackSize={3}
+        animateCardOpacity
         verticalSwipe={false}
+        onSwipedRight={onLike}
+        onSwipedLeft={onDislike}
+        onSwipedAll={onFinish}
+        backgroundColor="transparent"
         renderCard={(card) => (
           <Card card={card} userInterests={user.preferences.interests} />
         )}
-        onSwipedAll={() =>
-          Toast.show({
-            type: "info",
-            text1: "¡Wow! Parece que has deslizado demasiado",
-            text2: "Vuelve más tarde para encontrar más gente",
-          })
-        }
-        onSwipedRight={onLike}
-        onSwipedLeft={onDislike}
       />
     );
   }

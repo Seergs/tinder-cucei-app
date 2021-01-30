@@ -1,16 +1,22 @@
 import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import DeckSwiper from "react-native-deck-swiper";
+import Toast from "react-native-toast-message";
 import {
-  usePeopleQuery,
   useDislikeMutation,
   useLikeMutation,
+  usePeopleQuery,
 } from "../../../api";
-import Toast from "react-native-toast-message";
-import DeckSwiper from "react-native-deck-swiper";
-import Swiper from "./Swiper";
+import theme from "../../styles/theme";
 import FullpageSpinner from "../FullpageSpinner";
-import { Text } from "react-native";
+import Swiper from "./Swiper";
+const { colors } = theme;
 
 const SwiperContainer = React.forwardRef<DeckSwiper<any>>((_, ref) => {
+  const [isDeckFinished, setIsDeckFinished] = React.useState(false);
+  const [like] = useLikeMutation();
+  const [dislike] = useDislikeMutation();
+
   const {
     data: peopleData,
     error: peopleError,
@@ -24,24 +30,30 @@ const SwiperContainer = React.forwardRef<DeckSwiper<any>>((_, ref) => {
       }),
   });
 
-  typeof peopleData !== "undefined" &&
-    peopleData.people.__typename === "PeopleSuccess";
-
-  const [like] = useLikeMutation();
-  const [dislike] = useDislikeMutation();
-
-  const handleLike = (index: number) => {
+  const handleLike = async (index: number) => {
     if (
       typeof peopleData !== "undefined" &&
       peopleData.people.__typename === "PeopleSuccess"
     ) {
-      const targetUserId = peopleData.people.people[index].id;
+      const targetUser = peopleData.people.people[index];
 
-      like({
+      const { data } = await like({
         variables: {
-          targetUserId,
+          targetUserId: targetUser.id,
         },
       });
+
+      if (!data || data.likePerson.__typename !== "LikeSuccess") return;
+
+      const { likePerson } = data;
+
+      if (likePerson.match) {
+        Toast.show({
+          type: "success",
+          text1: `♥ Hiciste match con ${targetUser.firstName}`,
+          text2: "Ve a la pestaña Matches para ver",
+        });
+      }
     }
   };
 
@@ -59,21 +71,59 @@ const SwiperContainer = React.forwardRef<DeckSwiper<any>>((_, ref) => {
       });
     }
   };
+
+  const handleFinish = () => {
+    setIsDeckFinished(true);
+    Toast.show({
+      type: "info",
+      text1: "¡Wow! Parece que has deslizado demasiado",
+      text2: "Vuelve más tarde para encontrar más gente",
+    });
+  };
+
   if (isPeopleLoading) return <FullpageSpinner />;
   if (peopleError || peopleData?.people.__typename === "MeResultError")
     return <Text>Ups</Text>;
 
+  if (
+    typeof peopleData === "undefined" ||
+    !peopleData.people.people.length ||
+    isDeckFinished
+  ) {
+    return (
+      <Text style={styles.emptyText}>
+        No se encontraron personas, cambia el filtro o vuelve más tarde
+      </Text>
+    );
+  }
+
   if (peopleData && peopleData.people.__typename === "PeopleSuccess")
     return (
-      <Swiper
-        ref={ref}
-        people={peopleData.people.people}
-        onLike={handleLike}
-        onDislike={handleDislike}
-      />
+      <View style={styles.root}>
+        <Swiper
+          ref={ref}
+          people={peopleData.people.people}
+          onLike={handleLike}
+          onDislike={handleDislike}
+          onFinish={handleFinish}
+        />
+      </View>
     );
 
   return null;
 });
 
 export default SwiperContainer;
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  emptyText: {
+    fontSize: 22,
+    textAlign: "center",
+    color: colors.textGray,
+    fontWeight: "bold",
+    marginHorizontal: 80,
+  },
+});
