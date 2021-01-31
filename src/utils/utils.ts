@@ -1,4 +1,8 @@
 import dayjs from "dayjs";
+import RelativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/es";
+dayjs.extend(RelativeTime);
+dayjs.locale("es");
 
 export function isEmpty(s: string) {
   return s.trim().length === 0;
@@ -6,6 +10,10 @@ export function isEmpty(s: string) {
 
 export function formatDate(date: Date) {
   return dayjs(date).format("YYYY-MM-DD");
+}
+
+export function formatDateToHuman(date: Date) {
+  return dayjs(date).fromNow();
 }
 
 export function getAgeFromDateOfBirth(dob: Date) {

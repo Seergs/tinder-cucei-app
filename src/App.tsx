@@ -8,6 +8,7 @@ import BottomSheet, { BottomSheetOptions } from "./components/BottomSheet";
 import FullpageSpinner from "./components/FullpageSpinner";
 import useAuth from "./hooks/useAuth";
 import Login from "./screens/Login";
+import Matches from "./screens/Matches";
 import People from "./screens/People";
 import Register from "./screens/Register";
 import Welcome from "./screens/Welcome";
@@ -98,10 +99,16 @@ const AuthApp = () => {
         screenOptions={{
           headerShown: false,
         }}
+        initialRouteName="Matches"
       >
         <Stack.Screen name="People">
           {(props) => (
             <People onOpenBottomSheet={handleOpenBottomSheet} {...props} />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="Matches">
+          {(props) => (
+            <Matches onOpenBottomSheet={handleOpenBottomSheet} {...props} />
           )}
         </Stack.Screen>
       </Stack.Navigator>

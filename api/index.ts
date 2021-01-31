@@ -77,6 +77,26 @@ export type Match = {
   id: Scalars['String'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  userOne: User;
+  userTwo: User;
+};
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  studentCode: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  career: Scalars['String'];
+  description: Scalars['String'];
+  birthday: Scalars['DateTime'];
+  gender: Scalars['String'];
+  primaryImageUrl: Scalars['String'];
+  secondaryImagesUrl: Array<Scalars['String']>;
+  preferences: Preferences;
+  age: Scalars['Int'];
 };
 
 export type Mutation = {
@@ -118,24 +138,6 @@ export type UserRegisterResult = UserRegisterResultSuccess | UserRegisterInvalid
 export type UserRegisterResultSuccess = {
   __typename?: 'UserRegisterResultSuccess';
   user: User;
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  studentCode: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  career: Scalars['String'];
-  description: Scalars['String'];
-  birthday: Scalars['DateTime'];
-  gender: Scalars['String'];
-  primaryImageUrl: Scalars['String'];
-  secondaryImagesUrl: Array<Scalars['String']>;
-  preferences: Preferences;
-  age: Scalars['Int'];
 };
 
 export type UserRegisterInvalidInputError = {
@@ -300,6 +302,24 @@ export type LoginMutation = (
     { __typename: 'UserLoginInvalidInputError' }
     & Pick<UserLoginInvalidInputError, 'studentCode' | 'studentNip' | 'credentials'>
   ) }
+);
+
+export type MatchesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MatchesQuery = (
+  { __typename?: 'Query' }
+  & { matches?: Maybe<Array<(
+    { __typename?: 'Match' }
+    & Pick<Match, 'id' | 'createdAt'>
+    & { userOne: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'firstName' | 'lastName' | 'primaryImageUrl'>
+    ), userTwo: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'firstName' | 'lastName' | 'primaryImageUrl'>
+    ) }
+  )>> }
 );
 
 export type PeopleQueryVariables = Exact<{
@@ -518,6 +538,51 @@ export function useLoginMutation(baseOptions?: ApolloReactHooks.MutationHookOpti
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const MatchesDocument = gql`
+    query Matches {
+  matches {
+    id
+    createdAt
+    userOne {
+      id
+      firstName
+      lastName
+      primaryImageUrl
+    }
+    userTwo {
+      id
+      firstName
+      lastName
+      primaryImageUrl
+    }
+  }
+}
+    `;
+
+/**
+ * __useMatchesQuery__
+ *
+ * To run a query within a React component, call `useMatchesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMatchesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMatchesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMatchesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MatchesQuery, MatchesQueryVariables>) {
+        return ApolloReactHooks.useQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, baseOptions);
+      }
+export function useMatchesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MatchesQuery, MatchesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, baseOptions);
+        }
+export type MatchesQueryHookResult = ReturnType<typeof useMatchesQuery>;
+export type MatchesLazyQueryHookResult = ReturnType<typeof useMatchesLazyQuery>;
+export type MatchesQueryResult = Apollo.QueryResult<MatchesQuery, MatchesQueryVariables>;
 export const PeopleDocument = gql`
     query People($limit: Int!) {
   people(limit: $limit) {

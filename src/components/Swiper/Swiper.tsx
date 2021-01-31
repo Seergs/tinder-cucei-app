@@ -1,7 +1,7 @@
 import React from "react";
 import DeckSwiper from "react-native-deck-swiper";
 import useAuth from "../../hooks/useAuth";
-import Card from "../Card";
+import UserCard from "../UserCard";
 
 type Person = {
   id: string;
@@ -36,7 +36,7 @@ const Swiper = React.forwardRef<DeckSwiper<any>, SwiperProps>(
         onSwipedAll={onFinish}
         backgroundColor="transparent"
         renderCard={(card) => (
-          <Card card={card} userInterests={user.preferences.interests} />
+          <UserCard card={card} userInterests={user.preferences.interests} />
         )}
       />
     );

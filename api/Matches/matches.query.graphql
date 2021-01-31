@@ -1,0 +1,18 @@
+query Matches {
+  matches {
+    id
+    createdAt
+    userOne {
+      id
+      firstName
+      lastName
+      primaryImageUrl
+    }
+    userTwo {
+      id
+      firstName
+      lastName
+      primaryImageUrl
+    }
+  }
+}

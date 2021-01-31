@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from "react-native";
 import DeckSwiper from "react-native-deck-swiper";
 import Toast from "react-native-toast-message";
 import {
+  MatchesDocument,
+  MatchesQuery,
   useDislikeMutation,
   useLikeMutation,
   usePeopleQuery,
@@ -14,7 +16,29 @@ const { colors } = theme;
 
 const SwiperContainer = React.forwardRef<DeckSwiper<any>>((_, ref) => {
   const [isDeckFinished, setIsDeckFinished] = React.useState(false);
-  const [like] = useLikeMutation();
+  const [like] = useLikeMutation({
+    update: (cache, { data }) => {
+      if (!data || data.likePerson.__typename !== "LikeSuccess") return;
+
+      const {
+        likePerson: { match },
+      } = data;
+      if (match) {
+        const existingMatches = cache.readQuery<MatchesQuery>({
+          query: MatchesDocument,
+        });
+
+        if (existingMatches?.matches) {
+          cache.writeQuery({
+            query: MatchesDocument,
+            data: {
+              matches: [match, ...existingMatches.matches],
+            },
+          });
+        }
+      }
+    },
+  });
   const [dislike] = useDislikeMutation();
 
   const {

@@ -12,5 +12,7 @@ export default function FullpageSpinner() {
 }
 
 const styles = StyleSheet.create({
-  root: {},
+  root: {
+    flex: 1,
+  },
 });
