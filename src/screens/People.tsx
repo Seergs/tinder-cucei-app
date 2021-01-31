@@ -2,17 +2,17 @@ import React, { useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import DeckSwiper from "react-native-deck-swiper";
 import Topbar from "../components/Topbar";
-import Footer from "../components/Footer";
 import SwipeButton from "../components/Button/SwipeButton";
 import Swiper from "../components/Swiper";
 import theme from "../styles/theme";
 const { colors } = theme;
 
 type PeopleProps = {
-  onOpenBottomSheet: () => void;
+  peopleIndex: number;
+  onSwipe: () => void;
 };
 
-const People = React.memo(({ onOpenBottomSheet }: PeopleProps) => {
+const People = React.memo(({ peopleIndex, onSwipe }: PeopleProps) => {
   const swiperRef = useRef<DeckSwiper<any>>(null);
 
   return (
@@ -30,8 +30,7 @@ const People = React.memo(({ onOpenBottomSheet }: PeopleProps) => {
       <Topbar displayStyles={styles.topbar}>
         <Text style={styles.topbarText}>Personas</Text>
       </Topbar>
-      <Swiper ref={swiperRef} />
-      <Footer onOpenBottomSheet={onOpenBottomSheet} />
+      <Swiper onSwipe={onSwipe} peopleIndex={peopleIndex} ref={swiperRef} />
     </View>
   );
 });

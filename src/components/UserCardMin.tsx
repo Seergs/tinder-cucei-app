@@ -18,12 +18,12 @@ const UserCard = ({ user, createdAt }: UserCardProps) => {
 
   return (
     <View style={styles.card}>
-      <View style={styles.imageContainer}>
+      <View>
         <Image source={{ uri: primaryImageUrl }} style={styles.image} />
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.name}>
-          {firstName} {lastName}{" "}
+          {firstName} {lastName}
         </Text>
         <Text style={styles.date}>{formatDateToHuman(createdAt)}</Text>
       </View>
@@ -41,14 +41,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     elevation: 3,
   },
-  imageContainer: {},
   image: {
     width: "100%",
     height: 200,
   },
   textContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 5,
+    padding: 8,
   },
   name: {
     fontWeight: "bold",

@@ -15,13 +15,14 @@ type Person = {
 
 type SwiperProps = {
   people: Person[];
+  currentIndex: number;
   onLike: (index: number) => void;
   onDislike: (index: number) => void;
   onFinish: () => void;
 };
 
 const Swiper = React.forwardRef<DeckSwiper<any>, SwiperProps>(
-  ({ people, onLike, onDislike, onFinish }, ref) => {
+  ({ people, currentIndex, onLike, onDislike, onFinish }, ref) => {
     const { user } = useAuth();
 
     return (
@@ -29,6 +30,7 @@ const Swiper = React.forwardRef<DeckSwiper<any>, SwiperProps>(
         ref={ref}
         stackSize={people.length > 3 ? 3 : people.length}
         cards={people}
+        cardIndex={currentIndex}
         animateCardOpacity
         verticalSwipe={false}
         onSwipedRight={onLike}

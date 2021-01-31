@@ -4,15 +4,27 @@ query Matches {
     createdAt
     userOne {
       id
+      age
       firstName
       lastName
+      career
       primaryImageUrl
+      description
+      preferences {
+        interests
+      }
     }
     userTwo {
       id
+      age
+      career
       firstName
       lastName
       primaryImageUrl
+      description
+      preferences {
+        interests
+      }
     }
   }
 }

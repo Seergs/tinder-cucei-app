@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,6 +8,13 @@ import {
 } from "react-native";
 import { Modalize } from "react-native-modalize";
 import RangeSlider from "react-native-range-slider-expo";
+import Toast from "react-native-toast-message";
+import {
+  MeDocument,
+  PeopleDocument,
+  useUpdatePreferencesMutation,
+} from "../../api";
+import useAuth from "../hooks/useAuth";
 import theme from "../styles/theme";
 import { ButtonGroup, MultiButtonGroup } from "./ButtonGroup";
 const { colors } = theme;
@@ -31,36 +38,78 @@ const BottomSheet = React.forwardRef((props: BottomSheetProps, ref) => {
 
 export default BottomSheet;
 
-type BottomSheetOptionsProps = {
-  config: {
-    preferedGender: string;
-    minAge: number;
-    maxAge: number;
-    interests: string[];
-  };
-  isLoading: boolean;
-  onPreferedGenderChange: (newGender: string) => void;
-  onMinAgeChange: (age: number) => void;
-  onMaxAgeChange: (age: number) => void;
-  onInterestsChange: (interest: string) => void;
-  onSave: () => void;
-};
+export const BottomSheetOptions = () => {
+  const { user } = useAuth();
+  const [preferences, setPreferences] = useState(user.preferences);
 
-export const BottomSheetOptions = ({
-  config,
-  isLoading,
-  onPreferedGenderChange,
-  onMinAgeChange,
-  onMaxAgeChange,
-  onInterestsChange,
-  onSave,
-}: BottomSheetOptionsProps) => {
+  const [updatePreferences, { data, loading }] = useUpdatePreferencesMutation({
+    refetchQueries: [
+      {
+        query: PeopleDocument,
+        variables: { limit: 20 },
+      },
+      {
+        query: MeDocument,
+      },
+    ],
+    awaitRefetchQueries: true,
+  });
+
+  useEffect(() => {
+    if (data?.updatePreferences.__typename === "UpdatePreferencesInputError")
+      Toast.show({
+        type: "error",
+        text1: "Algo salió mal, intenta de nuevo más tarde",
+      });
+    else if (data?.updatePreferences.__typename === "UpdatePreferencesSuccess")
+      Toast.show({
+        type: "success",
+        text1: "Preferencias actualizadas",
+      });
+  }, [data]);
+
+  const handlePreferedGenderChange = (newGender: string) =>
+    setPreferences({ ...preferences, preferedGender: newGender });
+
+  const handleMinAgeChange = (age: number) => {
+    setPreferences({ ...preferences, minAge: age });
+  };
+
+  const handleMaxAgeChange = (age: number) => {
+    setPreferences({ ...preferences, maxAge: age });
+  };
+
+  const handleInterestsChange = (interest: string) => {
+    const interests = [...preferences.interests];
+
+    const index = interests.indexOf(interest);
+    if (index === -1) {
+      interests.push(interest);
+    } else {
+      interests.splice(index, 1);
+    }
+
+    setPreferences({ ...preferences, interests });
+  };
+
+  const handleSavePreferences = async () => {
+    await updatePreferences({
+      variables: {
+        preferences: {
+          minAge: preferences.minAge,
+          maxAge: preferences.maxAge,
+          interests: preferences.interests,
+          preferedGender: preferences.preferedGender,
+        },
+      },
+    });
+  };
   return (
     <View>
       <Text style={[styles.label, { marginTop: 0 }]}>Muéstrame</Text>
       <ButtonGroup
-        value={config.preferedGender}
-        onChange={onPreferedGenderChange}
+        value={preferences.preferedGender}
+        onChange={handlePreferedGenderChange}
       >
         <ButtonGroup.Item name="m">Hombres</ButtonGroup.Item>
         <ButtonGroup.Item name="f">Mujeres</ButtonGroup.Item>
@@ -69,11 +118,11 @@ export const BottomSheetOptions = ({
       <Text style={styles.label}>Rango de edad a mostrar</Text>
       <RangeSlider
         min={15}
-        max={50}
-        fromValueOnChange={onMinAgeChange}
-        toValueOnChange={onMaxAgeChange}
-        initialFromValue={config.minAge}
-        initialToValue={config.maxAge}
+        max={40}
+        fromValueOnChange={handleMinAgeChange}
+        toValueOnChange={handleMaxAgeChange}
+        initialFromValue={preferences.minAge}
+        initialToValue={preferences.maxAge}
         styleSize="small"
         fromKnobColor={colors.primaryOrange}
         toKnobColor={colors.primaryOrange}
@@ -81,10 +130,13 @@ export const BottomSheetOptions = ({
         valueLabelsBackgroundColor={colors.textDarkGray}
       />
       <Text style={styles.age}>
-        {config.minAge < 18 ? "🤨" : config.maxAge > 30 ? "😏" : null}
+        {preferences.minAge < 18 ? "🤨" : preferences.maxAge > 30 ? "😏" : null}
       </Text>
       <Text style={styles.label}>Cuáles son tus intereses?</Text>
-      <MultiButtonGroup values={config.interests} onChange={onInterestsChange}>
+      <MultiButtonGroup
+        values={preferences.interests}
+        onChange={handleInterestsChange}
+      >
         <MultiButtonGroup.Item name="Caminar">Caminar</MultiButtonGroup.Item>
         <MultiButtonGroup.Item name="Cantar">Cantar</MultiButtonGroup.Item>
         <MultiButtonGroup.Item name="Hacer amigos">
@@ -104,11 +156,11 @@ export const BottomSheetOptions = ({
       </MultiButtonGroup>
       <TouchableOpacity
         style={styles.saveButton}
-        onPress={onSave}
-        disabled={isLoading}
+        onPress={handleSavePreferences}
+        disabled={loading}
         activeOpacity={0.8}
       >
-        {isLoading ? (
+        {loading ? (
           <ActivityIndicator color="white" />
         ) : (
           <Text style={styles.saveButtonText}>GUARDAR</Text>

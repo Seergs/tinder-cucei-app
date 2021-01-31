@@ -96,6 +96,7 @@ export type User = {
   primaryImageUrl: Scalars['String'];
   secondaryImagesUrl: Array<Scalars['String']>;
   preferences: Preferences;
+  matches: Array<Match>;
   age: Scalars['Int'];
 };
 
@@ -314,10 +315,18 @@ export type MatchesQuery = (
     & Pick<Match, 'id' | 'createdAt'>
     & { userOne: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'firstName' | 'lastName' | 'primaryImageUrl'>
+      & Pick<User, 'id' | 'age' | 'firstName' | 'lastName' | 'career' | 'primaryImageUrl' | 'description'>
+      & { preferences: (
+        { __typename?: 'Preferences' }
+        & Pick<Preferences, 'interests'>
+      ) }
     ), userTwo: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'firstName' | 'lastName' | 'primaryImageUrl'>
+      & Pick<User, 'id' | 'age' | 'career' | 'firstName' | 'lastName' | 'primaryImageUrl' | 'description'>
+      & { preferences: (
+        { __typename?: 'Preferences' }
+        & Pick<Preferences, 'interests'>
+      ) }
     ) }
   )>> }
 );
@@ -545,15 +554,27 @@ export const MatchesDocument = gql`
     createdAt
     userOne {
       id
+      age
       firstName
       lastName
+      career
       primaryImageUrl
+      description
+      preferences {
+        interests
+      }
     }
     userTwo {
       id
+      age
+      career
       firstName
       lastName
       primaryImageUrl
+      description
+      preferences {
+        interests
+      }
     }
   }
 }
