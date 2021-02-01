@@ -9,6 +9,7 @@ query Matches {
       lastName
       career
       primaryImageUrl
+      secondaryImagesUrl
       description
       preferences {
         interests
@@ -21,6 +22,7 @@ query Matches {
       firstName
       lastName
       primaryImageUrl
+      secondaryImagesUrl
       description
       preferences {
         interests

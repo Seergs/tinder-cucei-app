@@ -13,9 +13,9 @@ import FullpageSpinner from "../components/FullpageSpinner";
 import useAuth from "../hooks/useAuth";
 import Topbar from "../components/Topbar";
 import UserCard from "../components/UserCardMin";
-import { createStackNavigator } from "@react-navigation/stack";
 import User from "../components/User";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 const { colors } = theme;
 
 const MatchesStack = createStackNavigator();

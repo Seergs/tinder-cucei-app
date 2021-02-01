@@ -6,6 +6,7 @@ const { colors } = theme;
 
 type UserCardProps = {
   user: {
+    id: string;
     firstName: string;
     lastName: string;
     primaryImageUrl: string;
@@ -18,9 +19,11 @@ const UserCard = ({ user, createdAt }: UserCardProps) => {
 
   return (
     <View style={styles.card}>
-      <View>
-        <Image source={{ uri: primaryImageUrl }} style={styles.image} />
-      </View>
+      <Image
+        source={{ uri: primaryImageUrl }}
+        style={styles.image}
+        resizeMode="cover"
+      />
       <View style={styles.textContainer}>
         <Text style={styles.name}>
           {firstName} {lastName}
@@ -30,6 +33,7 @@ const UserCard = ({ user, createdAt }: UserCardProps) => {
     </View>
   );
 };
+
 export default UserCard;
 
 const styles = StyleSheet.create({
@@ -42,8 +46,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
-    width: "100%",
-    height: 200,
+    width: 180,
+    height: 180,
   },
   textContainer: {
     padding: 8,

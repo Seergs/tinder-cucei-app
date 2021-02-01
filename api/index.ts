@@ -315,14 +315,14 @@ export type MatchesQuery = (
     & Pick<Match, 'id' | 'createdAt'>
     & { userOne: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'age' | 'firstName' | 'lastName' | 'career' | 'primaryImageUrl' | 'description'>
+      & Pick<User, 'id' | 'age' | 'firstName' | 'lastName' | 'career' | 'primaryImageUrl' | 'secondaryImagesUrl' | 'description'>
       & { preferences: (
         { __typename?: 'Preferences' }
         & Pick<Preferences, 'interests'>
       ) }
     ), userTwo: (
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'age' | 'career' | 'firstName' | 'lastName' | 'primaryImageUrl' | 'description'>
+      & Pick<User, 'id' | 'age' | 'career' | 'firstName' | 'lastName' | 'primaryImageUrl' | 'secondaryImagesUrl' | 'description'>
       & { preferences: (
         { __typename?: 'Preferences' }
         & Pick<Preferences, 'interests'>
@@ -559,6 +559,7 @@ export const MatchesDocument = gql`
       lastName
       career
       primaryImageUrl
+      secondaryImagesUrl
       description
       preferences {
         interests
@@ -571,6 +572,7 @@ export const MatchesDocument = gql`
       firstName
       lastName
       primaryImageUrl
+      secondaryImagesUrl
       description
       preferences {
         interests

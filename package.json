@@ -17,7 +17,7 @@
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-picker/picker": "1.9.2",
     "@react-navigation/bottom-tabs": "^5.11.7",
-    "@react-navigation/native": "^5.8.10",
+    "@react-navigation/native": "^5.9.2",
     "@react-navigation/stack": "^5.14.2",
     "apollo-link-error": "^1.1.13",
     "dayjs": "^1.10.2",
@@ -39,7 +39,6 @@
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.0",
-    "react-native-shared-element": "0.7.0",
     "react-native-svg": "^12.1.0",
     "react-native-toast-message": "^1.4.2",
     "react-native-web": "~0.13.12"
