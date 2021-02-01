@@ -5,14 +5,14 @@ import {
   Text,
   View,
   StyleSheet,
-  TouchableOpacity,
   FlatList,
   NativeSyntheticEvent,
+  TouchableOpacity,
   NativeScrollEvent,
 } from "react-native";
 import theme from "../styles/theme";
-import Interest from "./Interest";
-import Topbar from "./Topbar";
+import Interest from "../components/Interest";
+import Topbar from "../components/Topbar";
 import { ScrollView } from "react-native-gesture-handler";
 import useAuth from "../hooks/useAuth";
 import { AntDesign } from "@expo/vector-icons";
@@ -31,6 +31,7 @@ type Person = {
   preferences: {
     interests: string[];
   };
+  interests: string[];
 };
 
 type UserProps = {
@@ -38,21 +39,26 @@ type UserProps = {
   route: Route<any> & {
     params: {
       user: Person;
+      from: string;
     };
   };
 };
 
 const User = ({ navigation, route }: UserProps) => {
+  const { user: userProfile, from } = route.params;
   const {
     age,
     firstName,
     lastName,
     career,
     description,
-    preferences: { interests },
+    preferences,
+    interests,
     primaryImageUrl,
     secondaryImagesUrl,
-  } = route.params.user;
+  } = userProfile;
+
+  const userInterests = preferences ? preferences.interests : interests;
 
   const { user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
@@ -63,16 +69,42 @@ const User = ({ navigation, route }: UserProps) => {
     setCurrentImageIndex(Math.round(e.nativeEvent.contentOffset.x / WIDTH));
   };
 
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.page}>
-      <Topbar displayStyles={styles.topbar}>
-        <TouchableOpacity activeOpacity={0.8} onPress={navigation.goBack}>
+      <Topbar
+        displayStyles={
+          from === "Matches"
+            ? styles.topbarMessage
+            : {
+                justifyContent: "center",
+              }
+        }
+      >
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={handleGoBack}
+          style={from === "People" ? styles.topbarLeftButton : {}}
+        >
           <AntDesign name="left" color="white" size={22} />
         </TouchableOpacity>
-        <Text style={styles.topbarText}>Matches</Text>
-        <TouchableOpacity activeOpacity={0.8}>
-          <AntDesign name="message1" color="white" size={22} />
-        </TouchableOpacity>
+        <Text
+          style={
+            from === "People"
+              ? [styles.topbarTextAlone, styles.topbarText]
+              : styles.topbarText
+          }
+        >
+          Matches
+        </Text>
+        {from === "Matches" && (
+          <TouchableOpacity activeOpacity={0.8}>
+            <AntDesign name="message1" color="white" size={22} />
+          </TouchableOpacity>
+        )}
       </Topbar>
       <ScrollView>
         <FlatList
@@ -99,7 +131,7 @@ const User = ({ navigation, route }: UserProps) => {
           <Text style={styles.career}>{career}</Text>
           <View style={styles.separator} />
           <View style={styles.interests}>
-            {interests.map((interest) => (
+            {userInterests.map((interest) => (
               <Interest
                 isTinted={user.preferences.interests.includes(interest)}
                 key={interest}
@@ -128,16 +160,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
   },
-  topbar: {
+  topbarMessage: {
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
+  topbarLeftButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 2,
+  },
   topbarText: {
     color: "white",
     fontSize: 20,
     fontWeight: "bold",
+  },
+  topbarTextAlone: {
+    textAlign: "center",
   },
   image: {
     width: WIDTH,

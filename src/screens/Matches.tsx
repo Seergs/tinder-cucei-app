@@ -5,7 +5,6 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Animated,
 } from "react-native";
 import { useMatchesQuery } from "../../api";
 import theme from "../styles/theme";
@@ -13,32 +12,16 @@ import FullpageSpinner from "../components/FullpageSpinner";
 import useAuth from "../hooks/useAuth";
 import Topbar from "../components/Topbar";
 import UserCard from "../components/UserCardMin";
-import User from "../components/User";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { Route } from "@react-navigation/native";
 const { colors } = theme;
-
-const MatchesStack = createStackNavigator();
-
-export const MatchesStackNavigator = () => {
-  return (
-    <MatchesStack.Navigator
-      screenOptions={{
-        headerShown: false,
-        cardStyleInterpolator: forSlide,
-      }}
-    >
-      <MatchesStack.Screen name="Matches" component={Matches} />
-      <MatchesStack.Screen name="User" component={User} />
-    </MatchesStack.Navigator>
-  );
-};
 
 type MatchesProps = {
   navigation: BottomTabNavigationProp<any>;
+  route: Route<any>;
 };
 
-const Matches = ({ navigation }: MatchesProps) => {
+const Matches = ({ navigation, route }: MatchesProps) => {
   const { data, loading, error, refetch } = useMatchesQuery({
     pollInterval: 60000,
   });
@@ -67,7 +50,12 @@ const Matches = ({ navigation }: MatchesProps) => {
           return (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => navigation.navigate("User", { user: matchUser })}
+              onPress={() =>
+                navigation.navigate("User", {
+                  user: matchUser,
+                  from: route.name,
+                })
+              }
             >
               <UserCard user={matchUser} createdAt={match.createdAt} />
             </TouchableOpacity>
@@ -102,40 +90,3 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
 });
-const forSlide = ({ current, next, inverted, layouts: { screen } }: any) => {
-  const progress = Animated.add(
-    current.progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 1],
-      extrapolate: "clamp",
-    }),
-    next
-      ? next.progress.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, 1],
-          extrapolate: "clamp",
-        })
-      : 0
-  );
-
-  return {
-    cardStyle: {
-      transform: [
-        {
-          translateX: Animated.multiply(
-            progress.interpolate({
-              inputRange: [0, 1, 2],
-              outputRange: [
-                screen.width, // Focused, but offscreen in the beginning
-                0, // Fully focused
-                screen.width * -0.3, // Fully unfocused
-              ],
-              extrapolate: "clamp",
-            }),
-            inverted
-          ),
-        },
-      ],
-    },
-  };
-};

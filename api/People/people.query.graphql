@@ -8,7 +8,9 @@ query People($limit: Int!) {
         lastName
         career
         age
+        description
         primaryImageUrl
+        secondaryImagesUrl
         interests
       }
     }

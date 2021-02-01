@@ -3,8 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React, { useRef, useState } from "react";
 import { Modalize } from "react-native-modalize";
 import Toast from "react-native-toast-message";
-import { MatchesStackNavigator } from "../screens/Matches";
-import People from "../screens/People";
+import { Matches, People } from "../navigation";
 import BottomSheet, { BottomSheetOptions } from "./BottomSheet";
 import TabBar from "./TabBar";
 
@@ -49,7 +48,7 @@ const AuthApp = () => {
         </Tabs.Screen>
         <Tabs.Screen
           name="Matches"
-          component={MatchesStackNavigator}
+          component={Matches}
           options={{
             tabBarLabel: "Matches",
           }}

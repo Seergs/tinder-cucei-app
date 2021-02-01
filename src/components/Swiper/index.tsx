@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import DeckSwiper from "react-native-deck-swiper";
 import Toast from "react-native-toast-message";
+import { useNavigation } from "@react-navigation/native";
 import {
   MatchesDocument,
   MatchesQuery,
@@ -22,6 +23,7 @@ type SwiperProps = {
 const SwiperContainer = React.forwardRef<DeckSwiper<any>, SwiperProps>(
   ({ peopleIndex, onSwipe }, ref) => {
     const [isDeckFinished, setIsDeckFinished] = React.useState(false);
+    const { navigate } = useNavigation();
     const [like] = useLikeMutation({
       update: (cache, { data }) => {
         if (!data || data.likePerson.__typename !== "LikeSuccess") return;
@@ -114,6 +116,16 @@ const SwiperContainer = React.forwardRef<DeckSwiper<any>, SwiperProps>(
       });
     };
 
+    const handleCardPress = (index: number) => {
+      if (
+        typeof peopleData !== "undefined" &&
+        peopleData.people.__typename === "PeopleSuccess"
+      ) {
+        const targetUser = peopleData.people.people[index];
+        navigate("User", { user: targetUser, from: "People" });
+      }
+    };
+
     if (isPeopleLoading) return <FullpageSpinner />;
     if (peopleError || peopleData?.people.__typename === "MeResultError")
       return <Text>Ups</Text>;
@@ -140,6 +152,7 @@ const SwiperContainer = React.forwardRef<DeckSwiper<any>, SwiperProps>(
             onLike={handleLike}
             onDislike={handleDislike}
             onFinish={handleFinish}
+            onPress={handleCardPress}
           />
         </View>
       );

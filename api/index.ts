@@ -65,6 +65,7 @@ export type Person = {
   birthday: Scalars['DateTime'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+  description: Scalars['String'];
   primaryImageUrl: Scalars['String'];
   secondaryImagesUrl: Array<Scalars['String']>;
   age: Scalars['Int'];
@@ -342,7 +343,7 @@ export type PeopleQuery = (
     { __typename: 'PeopleSuccess' }
     & { people: Array<(
       { __typename?: 'Person' }
-      & Pick<Person, 'id' | 'firstName' | 'lastName' | 'career' | 'age' | 'primaryImageUrl' | 'interests'>
+      & Pick<Person, 'id' | 'firstName' | 'lastName' | 'career' | 'age' | 'description' | 'primaryImageUrl' | 'secondaryImagesUrl' | 'interests'>
     )> }
   ) | (
     { __typename: 'MeResultError' }
@@ -617,7 +618,9 @@ export const PeopleDocument = gql`
         lastName
         career
         age
+        description
         primaryImageUrl
+        secondaryImagesUrl
         interests
       }
     }
