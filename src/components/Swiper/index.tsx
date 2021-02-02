@@ -136,9 +136,17 @@ const SwiperContainer = React.forwardRef<DeckSwiper<any>, SwiperProps>(
       isDeckFinished
     ) {
       return (
-        <Text style={styles.emptyText}>
-          No se encontraron personas, cambia el filtro o vuelve más tarde
-        </Text>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            paddingHorizontal: 80,
+          }}
+        >
+          <Text style={styles.emptyText}>
+            No se encontraron personas, cambia el filtro o vuelve más tarde
+          </Text>
+        </View>
       );
     }
 
@@ -172,6 +180,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.textGray,
     fontWeight: "bold",
-    marginHorizontal: 80,
   },
 });

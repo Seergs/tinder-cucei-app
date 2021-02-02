@@ -1,7 +1,6 @@
 import React, { useReducer, useEffect, createContext } from "react";
 import { useMeQuery } from "../../api";
 import { omitPropFromObject } from "../utils/utils";
-
 type Type = "idle" | "pending" | "success" | "error" | "logout";
 type Dispatch = (action: { type: Type; payload?: any }) => void;
 type State = {
@@ -60,7 +59,6 @@ function authReducer(
 export const AuthProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const { data, error } = useMeQuery();
-
   useEffect(() => {
     dispatch({ type: "pending" });
   }, []);

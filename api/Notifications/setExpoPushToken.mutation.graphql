@@ -1,0 +1,3 @@
+mutation SetToken($token: String!) {
+  setExpoPushToken(token: $token)
+}

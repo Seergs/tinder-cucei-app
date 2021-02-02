@@ -1,5 +1,6 @@
 import React from "react";
 import { registerRootComponent } from "expo";
+import Constants from "expo-constants";
 import App from "./App";
 import AppProviders from "./components/Providers";
 
