@@ -5,6 +5,11 @@ query Me {
       id
       studentCode
       firstName
+      lastName
+      career
+      description
+      primaryImageUrl
+      secondaryImagesUrl
       preferences {
         preferedGender
         minAge

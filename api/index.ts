@@ -35,7 +35,12 @@ export type MeResultSuccess = {
   id: Scalars['String'];
   studentCode: Scalars['String'];
   firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  career: Scalars['String'];
+  description: Scalars['String'];
   preferences: Preferences;
+  primaryImageUrl: Scalars['String'];
+  secondaryImagesUrl: Array<Scalars['String']>;
 };
 
 export type Preferences = {
@@ -107,6 +112,7 @@ export type Mutation = {
   register: UserRegisterResult;
   login: UserLoginResult;
   updatePreferences: UpdatePreferencesResult;
+  updateProfile: UpdateProfileResult;
   likePerson: LikeResult;
   dislikePerson: LikeResult;
   setExpoPushToken: Scalars['Boolean'];
@@ -125,6 +131,11 @@ export type MutationLoginArgs = {
 
 export type MutationUpdatePreferencesArgs = {
   preferences: UpdatePreferencesInput;
+};
+
+
+export type MutationUpdateProfileArgs = {
+  inputData: UpdateProfileInput;
 };
 
 
@@ -220,6 +231,31 @@ export type UpdatePreferencesInput = {
   minAge: Scalars['Int'];
   maxAge: Scalars['Int'];
   interests: Array<Scalars['String']>;
+};
+
+export type UpdateProfileResult = MeResultError | UpdateProfileInputError | UpdateProfileSuccess;
+
+export type UpdateProfileInputError = {
+  __typename?: 'UpdateProfileInputError';
+  primaryImageUrl?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  career?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+export type UpdateProfileSuccess = {
+  __typename?: 'UpdateProfileSuccess';
+  updated: Scalars['Boolean'];
+};
+
+export type UpdateProfileInput = {
+  primaryImageUrl: Scalars['String'];
+  secondaryImagesUrl: Array<Scalars['String']>;
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  career: Scalars['String'];
+  description: Scalars['String'];
 };
 
 export type LikeResult = LikeSuccess | MeResultError | UserNotFoundError;
@@ -394,7 +430,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename: 'MeResultSuccess' }
-    & Pick<MeResultSuccess, 'id' | 'studentCode' | 'firstName'>
+    & Pick<MeResultSuccess, 'id' | 'studentCode' | 'firstName' | 'lastName' | 'career' | 'description' | 'primaryImageUrl' | 'secondaryImagesUrl'>
     & { preferences: (
       { __typename?: 'Preferences' }
       & Pick<Preferences, 'preferedGender' | 'minAge' | 'maxAge' | 'interests'>
@@ -761,6 +797,11 @@ export const MeDocument = gql`
       id
       studentCode
       firstName
+      lastName
+      career
+      description
+      primaryImageUrl
+      secondaryImagesUrl
       preferences {
         preferedGender
         minAge

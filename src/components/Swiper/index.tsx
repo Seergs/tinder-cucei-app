@@ -24,6 +24,7 @@ const SwiperContainer = React.forwardRef<DeckSwiper<any>, SwiperProps>(
   ({ peopleIndex, onSwipe }, ref) => {
     const [isDeckFinished, setIsDeckFinished] = React.useState(false);
     const { navigate } = useNavigation();
+    const [dislike] = useDislikeMutation();
     const [like] = useLikeMutation({
       update: (cache, { data }) => {
         if (!data || data.likePerson.__typename !== "LikeSuccess") return;
@@ -47,14 +48,13 @@ const SwiperContainer = React.forwardRef<DeckSwiper<any>, SwiperProps>(
         }
       },
     });
-    const [dislike] = useDislikeMutation();
 
     const {
       data: peopleData,
       error: peopleError,
       loading: isPeopleLoading,
     } = usePeopleQuery({
-      variables: { limit: 20 },
+      variables: { limit: 50 },
       onError: () =>
         Toast.show({
           type: "error",

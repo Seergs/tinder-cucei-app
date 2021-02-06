@@ -5,15 +5,22 @@ import {
   BottomTabBarOptions,
   BottomTabBarProps,
 } from "@react-navigation/bottom-tabs";
-import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import theme from "../styles/theme";
 const { colors } = theme;
 
-const ICONS = {
-  People: "clockcircle",
-  PeopleOutlined: "clockcircleo",
+const ACTIVE_ICONS = {
+  People: "time",
   Matches: "heart",
-  Options: "ellipsis1",
+  Options: "ellipsis-horizontal",
+  Profile: "person",
+};
+
+const INACTIVE_ICONS = {
+  People: "time-outline",
+  Matches: "heart-outline",
+  Options: "ellipsis-horizontal-outline",
+  Profile: "person-outline",
 };
 
 type TabBarProps = {
@@ -35,8 +42,10 @@ const TabBar = ({ tabBarProps, onOpenBottomSheet }: TabBarProps) => {
             ? options.title
             : route.name;
         const isFocused = state.index === index;
-        const routeName = route.name as keyof typeof ICONS;
-        const iconName = isFocused ? ICONS[routeName] : `${ICONS[routeName]}o`;
+        const routeName = route.name as keyof typeof ACTIVE_ICONS;
+        const iconName = isFocused
+          ? ACTIVE_ICONS[routeName]
+          : INACTIVE_ICONS[routeName];
 
         const handlePress = () => {
           const event = navigation.emit({
@@ -70,7 +79,7 @@ const TabBar = ({ tabBarProps, onOpenBottomSheet }: TabBarProps) => {
         );
       })}
       <TabBarIcon
-        iconName="ellipsis1"
+        iconName={INACTIVE_ICONS["Options"]}
         isFocused={false}
         label="Opciones"
         onPress={onOpenBottomSheet}
@@ -102,13 +111,14 @@ const TabBarIcon = ({
   return (
     <TouchableOpacity
       style={styles.button}
+      activeOpacity={0.5}
       accessibilityRole="button"
       accessibilityState={isFocused ? { selected: true } : {}}
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
       onLongPress={onLongPress}
     >
-      <AntDesign
+      <Ionicons
         name={iconName as any}
         size={22}
         color={isFocused ? colors.primaryOrange : colors.textGray}

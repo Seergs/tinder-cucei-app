@@ -22,9 +22,7 @@ type MatchesProps = {
 };
 
 const Matches = ({ navigation, route }: MatchesProps) => {
-  const { data, loading, error, refetch } = useMatchesQuery({
-    pollInterval: 60000,
-  });
+  const { data, loading, error, refetch } = useMatchesQuery();
   const { user } = useAuth();
 
   if (loading) return <FullpageSpinner />;

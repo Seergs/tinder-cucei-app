@@ -11,6 +11,7 @@ import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { Subscription } from "@unimodules/core";
+import Profile from "../screens/Profile";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -107,6 +108,13 @@ const AuthApp = () => {
             tabBarLabel: "Matches",
           }}
         />
+        <Tabs.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            tabBarLabel: "Perfil",
+          }}
+        />
       </Tabs.Navigator>
       <BottomSheet ref={modalizeRef}>
         <BottomSheetOptions />
@@ -117,16 +125,6 @@ const AuthApp = () => {
 };
 
 export default AuthApp;
-
-const schedulePushNotification = async () => {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "Hiciste Match ♥",
-      body: "Alguien te dió like e hicieron Match",
-    },
-    trigger: { seconds: 2 },
-  });
-};
 
 const registerForPushNotificationsAsync = async () => {
   let token;
